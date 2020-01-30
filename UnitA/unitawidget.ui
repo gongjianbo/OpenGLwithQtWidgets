@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UnitAWidget</class>
+ <widget class="QWidget" name="UnitAWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>467</width>
+    <height>318</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="GLTriangle" name="openGLWidget_1"/>
+   </item>
+   <item row="0" column="1">
+    <widget class="GLElement" name="openGLWidget_2"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="GLTexture" name="openGLWidget_3"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QOpenGLWidget" name="openGLWidget_4"/>
+   </item>
+   <item row="1" column="1">
+    <widget class="QOpenGLWidget" name="openGLWidget_5"/>
+   </item>
+   <item row="1" column="2">
+    <widget class="QOpenGLWidget" name="openGLWidget_6"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QOpenGLWidget" name="openGLWidget_7"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QOpenGLWidget" name="openGLWidget_8"/>
+   </item>
+   <item row="2" column="2">
+    <widget class="QOpenGLWidget" name="openGLWidget_9"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GLTriangle</class>
+   <extends>QOpenGLWidget</extends>
+   <header location="global">GLTriangle.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLElement</class>
+   <extends>QOpenGLWidget</extends>
+   <header location="global">GLElement.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLTexture</class>
+   <extends>QOpenGLWidget</extends>
+   <header location="global">GLTexture.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
