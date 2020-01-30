@@ -145,10 +145,10 @@ void GLTextureUnit::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //当我们需要绘制透明图片时，就需要关闭GL_DEPTH_TEST并且打开混合glEnable(GL_BLEND);
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
+    //glDisable(GL_DEPTH_TEST);
+    //glEnable(GL_BLEND);
     //基于源像素Alpha通道值的半透明混合函数
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     //纹理单元的应用
     glActiveTexture(GL_TEXTURE0);
