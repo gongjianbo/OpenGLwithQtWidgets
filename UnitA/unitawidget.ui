@@ -27,7 +27,7 @@
     <widget class="GLTextureUnit" name="openGLWidget_4"/>
    </item>
    <item row="1" column="1">
-    <widget class="QOpenGLWidget" name="openGLWidget_5"/>
+    <widget class="GLTransform" name="openGLWidget_5"/>
    </item>
    <item row="1" column="2">
     <widget class="QOpenGLWidget" name="openGLWidget_6"/>
@@ -63,6 +63,11 @@
    <class>GLTextureUnit</class>
    <extends>QOpenGLWidget</extends>
    <header location="global">GLTextureUnit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLTransform</class>
+   <extends>QOpenGLWidget</extends>
+   <header location="global">GLTransform.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
