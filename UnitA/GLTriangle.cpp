@@ -1,5 +1,7 @@
 #include "GLTriangle.h"
 
+#include <QDebug>
+
 GLTriangle::GLTriangle(QWidget *parent)
     : QOpenGLWidget(parent)
 {

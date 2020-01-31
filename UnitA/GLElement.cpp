@@ -1,5 +1,7 @@
 #include "GLElement.h"
 
+#include <QDebug>
+
 GLElement::GLElement(QWidget *parent)
     : QOpenGLWidget(parent)
 {

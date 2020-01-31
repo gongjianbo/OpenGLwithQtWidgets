@@ -1,5 +1,7 @@
 #include "GLTextureUnit.h"
 
+#include <QDebug>
+
 GLTextureUnit::GLTextureUnit(QWidget *parent)
     : QOpenGLWidget(parent)
 {

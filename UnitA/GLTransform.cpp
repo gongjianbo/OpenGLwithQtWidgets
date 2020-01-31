@@ -1,5 +1,7 @@
 #include "GLTransform.h"
 
+#include <QDebug>
+
 GLTransform::GLTransform(QWidget *parent)
     : QOpenGLWidget(parent)
 {
