@@ -1,4 +1,5 @@
 HEADERS += \
+    $$PWD/GLCamera.h \
     $$PWD/GLCoordinate.h \
     $$PWD/GLElement.h \
     $$PWD/GLTexture.h \
@@ -8,6 +9,7 @@ HEADERS += \
     $$PWD/unitawidget.h
 
 SOURCES += \
+    $$PWD/GLCamera.cpp \
     $$PWD/GLCoordinate.cpp \
     $$PWD/GLElement.cpp \
     $$PWD/GLTexture.cpp \
