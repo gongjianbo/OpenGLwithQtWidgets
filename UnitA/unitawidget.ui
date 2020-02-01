@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>467</width>
-    <height>318</height>
+    <width>718</width>
+    <height>433</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,23 +23,32 @@
    <item row="0" column="2">
     <widget class="GLTexture" name="openGLWidget_3"/>
    </item>
-   <item row="1" column="0">
+   <item row="0" column="3">
     <widget class="GLTextureUnit" name="openGLWidget_4"/>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="0">
     <widget class="GLTransform" name="openGLWidget_5"/>
    </item>
-   <item row="1" column="2">
-    <widget class="QOpenGLWidget" name="openGLWidget_6"/>
+   <item row="1" column="1">
+    <widget class="GLCoordinate" name="openGLWidget_6"/>
    </item>
-   <item row="2" column="0">
+   <item row="1" column="2">
     <widget class="QOpenGLWidget" name="openGLWidget_7"/>
    </item>
-   <item row="2" column="1">
+   <item row="1" column="3">
     <widget class="QOpenGLWidget" name="openGLWidget_8"/>
    </item>
-   <item row="2" column="2">
+   <item row="2" column="0">
     <widget class="QOpenGLWidget" name="openGLWidget_9"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QOpenGLWidget" name="openGLWidget_10"/>
+   </item>
+   <item row="2" column="2">
+    <widget class="QOpenGLWidget" name="openGLWidget_11"/>
+   </item>
+   <item row="2" column="3">
+    <widget class="QOpenGLWidget" name="openGLWidget_12"/>
    </item>
   </layout>
  </widget>
@@ -68,6 +77,11 @@
    <class>GLTransform</class>
    <extends>QOpenGLWidget</extends>
    <header location="global">GLTransform.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLCoordinate</class>
+   <extends>QOpenGLWidget</extends>
+   <header location="global">GLCoordinate.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

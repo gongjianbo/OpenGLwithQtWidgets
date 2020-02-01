@@ -1,4 +1,5 @@
 HEADERS += \
+    $$PWD/GLCoordinate.h \
     $$PWD/GLElement.h \
     $$PWD/GLTexture.h \
     $$PWD/GLTextureUnit.h \
@@ -7,6 +8,7 @@ HEADERS += \
     $$PWD/unitawidget.h
 
 SOURCES += \
+    $$PWD/GLCoordinate.cpp \
     $$PWD/GLElement.cpp \
     $$PWD/GLTexture.cpp \
     $$PWD/GLTextureUnit.cpp \
