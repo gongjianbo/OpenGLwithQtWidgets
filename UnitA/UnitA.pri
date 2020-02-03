@@ -2,6 +2,7 @@ HEADERS += \
     $$PWD/GLCamera.h \
     $$PWD/GLCoordinate.h \
     $$PWD/GLElement.h \
+    $$PWD/GLTestPoker.h \
     $$PWD/GLTexture.h \
     $$PWD/GLTextureUnit.h \
     $$PWD/GLTransform.h \
@@ -12,6 +13,7 @@ SOURCES += \
     $$PWD/GLCamera.cpp \
     $$PWD/GLCoordinate.cpp \
     $$PWD/GLElement.cpp \
+    $$PWD/GLTestPoker.cpp \
     $$PWD/GLTexture.cpp \
     $$PWD/GLTextureUnit.cpp \
     $$PWD/GLTransform.cpp \

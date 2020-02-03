@@ -36,7 +36,7 @@
     <widget class="GLCamera" name="openGLWidget_7"/>
    </item>
    <item row="1" column="3">
-    <widget class="QOpenGLWidget" name="openGLWidget_8"/>
+    <widget class="GLTestPoker" name="openGLWidget_8"/>
    </item>
    <item row="2" column="0">
     <widget class="QOpenGLWidget" name="openGLWidget_9"/>
@@ -87,6 +87,11 @@
    <class>GLCamera</class>
    <extends>QOpenGLWidget</extends>
    <header location="global">GLCamera.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLTestPoker</class>
+   <extends>QOpenGLWidget</extends>
+   <header location="global">GLTestPoker.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
