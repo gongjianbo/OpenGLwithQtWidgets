@@ -4,10 +4,12 @@ CONFIG += c++11
 CONFIG += utf8_source
 
 SOURCES += \
+    MyCamera.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    MyCamera.h \
     mainwindow.h
 
 FORMS += \
