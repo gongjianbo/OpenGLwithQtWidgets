@@ -10,9 +10,12 @@ GLElement::GLElement(QWidget *parent)
 
 GLElement::~GLElement()
 {
-    glDeleteVertexArrays(1, &_VAO);
+    //释放的时候，如果该部件处于非当前显示的tab页，会异常退出
+    //（使用qt封装的类没有出现退出异常）
+    //单独使用时去掉注释
+    /*glDeleteVertexArrays(1, &_VAO);
     glDeleteBuffers(1, &_VBO);
-    glDeleteBuffers(1, &_EBO);
+    glDeleteBuffers(1, &_EBO);*/
 }
 
 void GLElement::initializeGL()

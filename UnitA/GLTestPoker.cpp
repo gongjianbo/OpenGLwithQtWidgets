@@ -1,5 +1,7 @@
 #include "GLTestPoker.h"
 
+#include <QObject>
+
 GLTestPoker::GLTestPoker(QWidget *parent)
     : QOpenGLWidget(parent)
 {
