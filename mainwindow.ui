@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>707</width>
+    <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,14 +18,14 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="UnitAWidget" name="tab_1">
        <attribute name="title">
         <string>UnitA</string>
        </attribute>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="UnitBWidget" name="tab_2">
        <attribute name="title">
         <string>UnitB</string>
        </attribute>
@@ -39,8 +39,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>23</height>
+     <width>707</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -51,6 +51,12 @@
    <class>UnitAWidget</class>
    <extends>QWidget</extends>
    <header location="global">unitawidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>UnitBWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">unitbwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

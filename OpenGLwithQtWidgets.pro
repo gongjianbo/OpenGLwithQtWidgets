@@ -15,4 +15,6 @@ FORMS += \
 
 include($$PWD/Image/Image.pri)
 include($$PWD/UnitA/UnitA.pri)
+include($$PWD/UnitB/UnitB.pri)
 INCLUDEPATH += $$PWD/UnitA
+INCLUDEPATH += $$PWD/UnitB
