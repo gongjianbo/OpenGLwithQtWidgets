@@ -64,8 +64,10 @@ void GLTestPoker::initializeGL()
         qDebug()<<"link shaderprogram error"<<_shaderProgram.log();
     }
 
-    //VAO,VBO（一个面两个三角）360/460
-    const float texture_width=360.0f/460.0f;
+    //VAO,VBO（一个面两个三角）宽高比360/460
+    const QImage img_temp(":/liuyifei.png");
+    //上下两张图，所以高度除以二
+    const float texture_width=1.0f*img_temp.width()/(img_temp.height()/2);
     float vertices[] = {
         -texture_width/2, -0.5f, 0.0f,  0.0f, 0.5f, //左下角
         texture_width/2, -0.5f, 0.0f,  1.0f, 0.5f, //右下角
@@ -103,7 +105,7 @@ void GLTestPoker::initializeGL()
 
     // texture 1
     //直接生成绑定一个2d纹理, 并生成多级纹理MipMaps
-    _texture = new QOpenGLTexture(QImage(":/liuyifei.png"), QOpenGLTexture::GenerateMipMaps);
+    _texture = new QOpenGLTexture(img_temp, QOpenGLTexture::GenerateMipMaps);
     if(!_texture->isCreated()){
         qDebug() << "Failed to load texture";
     }
