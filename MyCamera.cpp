@@ -32,6 +32,11 @@ QMatrix4x4 MyCamera::getViewMatrix() const
     return view;
 }
 
+QVector3D MyCamera::getPosition() const
+{
+    return Position;
+}
+
 float MyCamera::getZoom() const
 {
     return Zoom;

@@ -18,7 +18,7 @@
     <widget class="GLColors" name="openGLWidget_1"/>
    </item>
    <item row="0" column="1">
-    <widget class="QOpenGLWidget" name="openGLWidget_2"/>
+    <widget class="GLBasicLighting" name="openGLWidget_2"/>
    </item>
    <item row="0" column="2">
     <widget class="QOpenGLWidget" name="openGLWidget_3"/>
@@ -47,7 +47,12 @@
   <customwidget>
    <class>GLColors</class>
    <extends>QOpenGLWidget</extends>
-   <header location="global">GLColors.h</header>
+   <header>GLColors.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLBasicLighting</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLBasicLighting.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

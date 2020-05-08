@@ -26,6 +26,7 @@ public:
     ~MyCamera();
 
     QMatrix4x4 getViewMatrix() const;
+    QVector3D getPosition() const;
     float getZoom() const;
 
     void keyPress(int key);
