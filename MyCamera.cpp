@@ -44,15 +44,19 @@ void MyCamera::keyPress(int key)
     float velocity = MovementSpeed*0.1;//deltaTime;
     switch (key) {
     case Qt::Key_W: //forward
+    case Qt::Key_Up:
         Position+=Front * velocity;
         break;
     case Qt::Key_S://backward
+    case Qt::Key_Down:
         Position-=Front * velocity;
         break;
     case Qt::Key_A: //left
+    case Qt::Key_Left:
         Position-=Right * velocity;
         break;
     case Qt::Key_D: //right
+    case Qt::Key_Right:
         Position+=Right * velocity;
         break;
     default:
