@@ -32,8 +32,9 @@ void GLElement::initializeGL()
                            })";
     const char *fragment_str=R"(#version 330 core
                              uniform vec3 myColor;
+                             out vec4 FragColor;
                              void main() {
-                             gl_FragColor = vec4(myColor,1.0);
+                             FragColor = vec4(myColor,1.0);
                              })";
 
     //将source编译为指定类型的着色器，并添加到此着色器程序

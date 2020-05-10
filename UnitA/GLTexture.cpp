@@ -44,10 +44,10 @@ void GLTexture::initializeGL()
                              in vec3 ourColor;
                              in vec2 TexCoord;
                              uniform sampler2D ourTexture;
-
+                             out vec4 FragColor;
                              void main()
                              {
-                             gl_FragColor = texture(ourTexture, TexCoord) * vec4(ourColor, 1.0);
+                             FragColor = texture(ourTexture, TexCoord) * vec4(ourColor, 1.0);
                              })";
 
     //将source编译为指定类型的着色器，并添加到此着色器程序

@@ -223,6 +223,8 @@ void GLBasicLighting::initShader()
                                   uniform vec3 lightPos;
                                   uniform vec3 viewPos;
 
+                                  out vec4 FragColor;
+
                                   void main()
                                   {
                                   // ambient
@@ -243,7 +245,7 @@ void GLBasicLighting::initShader()
                                   vec3 specular = specularStrength * spec * lightColor;
 
                                   vec3 result = (ambient + diffuse + specular) * objectColor;
-                                  gl_FragColor = vec4(result, 1.0f);
+                                  FragColor = vec4(result, 1.0f);
                                   })";
 
     //将source编译为指定类型的着色器，并添加到此着色器程序
@@ -272,10 +274,11 @@ void GLBasicLighting::initShader()
                             gl_Position = projection * view * model * vec4(aPos, 1.0f);
                             })";
     const char *lamp_fragment=R"(#version 330 core
+                              out vec4 FragColor;
 
                               void main()
                               {
-                              gl_FragColor = vec4(1.0);
+                              FragColor = vec4(1.0);
                               })"; // set alle 4 vector values to 1.0
 
     if(!_lampShader.addCacheableShaderFromSourceCode(

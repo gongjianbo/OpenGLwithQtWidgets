@@ -46,10 +46,10 @@ void GLTestPoker::initializeGL()
     const char *fragment_str=R"(#version 330 core
                              in vec2 TexCoord;
                              uniform sampler2D texture1;
-
+                             out vec4 FragColor;
                              void main()
                              {
-                             gl_FragColor = texture(texture1, TexCoord);
+                             FragColor = texture(texture1, TexCoord);
                              })";
 
     //将source编译为指定类型的着色器，并添加到此着色器程序

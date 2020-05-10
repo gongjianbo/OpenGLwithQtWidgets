@@ -201,10 +201,11 @@ void GLColors::initShader()
     const char *lighting_fragment=R"(#version 330 core
                                   uniform vec3 objectColor;
                                   uniform vec3 lightColor;
+                                  out vec4 FragColor;
 
                                   void main()
                                   {
-                                  gl_FragColor = vec4(lightColor * objectColor, 1.0);
+                                  FragColor = vec4(lightColor * objectColor, 1.0);
                                   })";
 
     //将source编译为指定类型的着色器，并添加到此着色器程序
@@ -233,10 +234,10 @@ void GLColors::initShader()
                             gl_Position = projection * view * model * vec4(aPos, 1.0f);
                             })";
     const char *lamp_fragment=R"(#version 330 core
-
+                              out vec4 FragColor;
                               void main()
                               {
-                              gl_FragColor = vec4(1.0);
+                              FragColor = vec4(1.0);
                               })"; // set alle 4 vector values to 1.0
 
     if(!_lampShader.addCacheableShaderFromSourceCode(
