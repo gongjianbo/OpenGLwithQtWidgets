@@ -1,6 +1,6 @@
 #include "GLColors.h"
 
-#include <QObject>
+#include <QDebug>
 
 GLColors::GLColors(QWidget *parent)
     : QOpenGLWidget(parent)

@@ -1,6 +1,6 @@
 #include "GLBasicLighting.h"
 
-#include <QObject>
+#include <QDebug>
 
 GLBasicLighting::GLBasicLighting(QWidget *parent)
     : QOpenGLWidget(parent)
