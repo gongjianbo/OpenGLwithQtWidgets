@@ -21,7 +21,7 @@
     <widget class="GLBasicLighting" name="openGLWidget_2"/>
    </item>
    <item row="0" column="2">
-    <widget class="QOpenGLWidget" name="openGLWidget_3"/>
+    <widget class="GLMaterials" name="openGLWidget_3"/>
    </item>
    <item row="1" column="0">
     <widget class="QOpenGLWidget" name="openGLWidget_4"/>
@@ -53,6 +53,11 @@
    <class>GLBasicLighting</class>
    <extends>QOpenGLWidget</extends>
    <header>GLBasicLighting.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLMaterials</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLMaterials.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
