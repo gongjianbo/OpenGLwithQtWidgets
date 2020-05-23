@@ -9,6 +9,7 @@
 #include <QOpenGLTexture>
 #include <QTimer>
 
+//练习：扑克翻转
 class GLTestPoker : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 {
     Q_OBJECT

@@ -12,6 +12,7 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 
+//摄像机
 class GLCamera : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 {
     Q_OBJECT

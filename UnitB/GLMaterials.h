@@ -10,6 +10,7 @@
 
 #include <QTimer>
 
+//光照材质
 class GLMaterials : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 {
     Q_OBJECT
