@@ -13,3 +13,5 @@ HEADERS += \
 FORMS += \
     mainwindow.ui
 
+include($$PWD/TheBasic/TheBasic.pri)
+INCLUDEPATH += $$PWD/TheBasic

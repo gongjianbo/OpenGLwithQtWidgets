@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TheBasic</class>
+ <widget class="QWidget" name="TheBasic">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>839</width>
+    <height>521</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="tabPosition">
+      <enum>QTabWidget::North</enum>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Rounded</enum>
+     </property>
+     <widget class="QWidget" name="tabTriangle">
+      <attribute name="title">
+       <string>Triangle</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="GLTriangle" name="triangle"/>
+       </item>
+       <item>
+        <widget class="GLTriangle330" name="triangle330"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabOther">
+      <attribute name="title">
+       <string>Tab 2</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GLTriangle</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLTriangle.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLTriangle330</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLTriangle330.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
