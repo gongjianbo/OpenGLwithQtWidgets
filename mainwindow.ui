@@ -13,27 +13,7 @@
   <property name="windowTitle">
    <string>Learn OpenGL</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>1</number>
-      </property>
-      <widget class="UnitAWidget" name="tab_1">
-       <attribute name="title">
-        <string>UnitA</string>
-       </attribute>
-      </widget>
-      <widget class="UnitBWidget" name="tab_2">
-       <attribute name="title">
-        <string>UnitB</string>
-       </attribute>
-      </widget>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+  <widget class="QWidget" name="centralwidget"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -46,20 +26,6 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>UnitAWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">unitawidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>UnitBWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">unitbwidget.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
