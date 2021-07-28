@@ -26,12 +26,18 @@
       <attribute name="title">
        <string>Triangle</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
         <widget class="GLTriangle" name="triangle"/>
        </item>
-       <item>
+       <item row="0" column="1">
         <widget class="GLTriangle330" name="triangle330"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="GLTriangleQt" name="triangleQt"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QOpenGLWidget" name="openGLWidget"/>
        </item>
       </layout>
      </widget>
@@ -54,6 +60,11 @@
    <class>GLTriangle330</class>
    <extends>QOpenGLWidget</extends>
    <header>GLTriangle330.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLTriangleQt</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLTriangleQt.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

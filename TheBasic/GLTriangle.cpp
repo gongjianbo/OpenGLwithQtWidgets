@@ -39,7 +39,6 @@ void main() {
 fragColor = vec4(myColor,1.0);
 })";
 
-    //【0】有点没懂得是为什么着色器是create*来创建而不是gen*
     //顶点着色器
     //创建着色器对象
     //GLuint glCreateShader(GLenum shaderType​);
@@ -149,7 +148,7 @@ void GLTriangle::paintGL()
     //安装所指定的程序对象程序作为当前再现状态的一部分
     glUseProgram(shaderProgram);
     //传递值
-    glUniform3f(glGetUniformLocation(shaderProgram, "myColor"), 0.0f, 1.0f, 0.0f);
+    glUniform3f(glGetUniformLocation(shaderProgram, "myColor"), 1.0f, 0.0f, 0.0f);
     //绑定数组对象
     glBindVertexArray(vao);
 

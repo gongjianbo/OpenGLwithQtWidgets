@@ -1,17 +1,20 @@
 #pragma once
 #include <QOpenGLWidget>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_4_5_Compatibility>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
 
-//OpenGL3.3画三角
+//OpenGL Qt封装的类画三角
 //QOpenGLWidget窗口上下文
 //QOpenGLFunctions访问OpenGL接口，可以不继承作为成员变量使用
-class GLTriangle330
+class GLTriangleQt
         : public QOpenGLWidget
-        , protected QOpenGLFunctions_3_3_Core
+        , protected QOpenGLFunctions_4_5_Compatibility
 {
 public:
-    explicit GLTriangle330(QWidget *parent = nullptr);
-    ~GLTriangle330();
+    explicit GLTriangleQt(QWidget *parent = nullptr);
+    ~GLTriangleQt();
 
 protected:
     //【】继承QOpenGLWidget后重写这三个虚函数
@@ -23,11 +26,10 @@ protected:
     void resizeGL(int width, int height) override;
 
 private:
-    void checkShaderError(GLuint id, const QString &type);
-
-private:
-    //还没使用Qt的封装
-    GLuint shaderProgram = 0;
-    GLuint vao = 0;
-    GLuint vbo = 0;
+    //使用Qt提供的便捷类
+    QOpenGLShaderProgram shaderProgram;
+    QOpenGLVertexArrayObject vao;
+    QOpenGLBuffer vbo;
 };
+
+

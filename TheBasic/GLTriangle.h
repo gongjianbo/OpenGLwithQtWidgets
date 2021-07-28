@@ -1,8 +1,8 @@
 #pragma once
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_4_5_Compatibility>
-#include <QOpenGLShaderProgram>
 
+//OpenGL4.5画三角
 //QOpenGLWidget窗口上下文
 //QOpenGLFunctions访问OpenGL接口，可以不继承作为成员变量使用
 class GLTriangle
