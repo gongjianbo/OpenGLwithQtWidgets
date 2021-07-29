@@ -37,7 +37,7 @@
         <widget class="GLTriangleQt" name="triangleQt"/>
        </item>
        <item row="1" column="1">
-        <widget class="QOpenGLWidget" name="openGLWidget"/>
+        <widget class="GLElement" name="element"/>
        </item>
       </layout>
      </widget>
@@ -65,6 +65,11 @@
    <class>GLTriangleQt</class>
    <extends>QOpenGLWidget</extends>
    <header>GLTriangleQt.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLElement</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLElement.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
