@@ -15,3 +15,5 @@ FORMS += \
 
 include($$PWD/TheBasic/TheBasic.pri)
 INCLUDEPATH += $$PWD/TheBasic
+include($$PWD/TheImage/TheImage.pri)
+INCLUDEPATH += $$PWD/TheImage

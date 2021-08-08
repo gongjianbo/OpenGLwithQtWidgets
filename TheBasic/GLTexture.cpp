@@ -1,13 +1,14 @@
-#include "GLTriangle.h"
+#include "GLTexture.h"
+#include <QImage>
 #include <QDebug>
 
-GLTriangle::GLTriangle(QWidget *parent)
+GLTexture::GLTexture(QWidget *parent)
     : QOpenGLWidget(parent)
 {
 
 }
 
-GLTriangle::~GLTriangle()
+GLTexture::~GLTexture()
 {
     //QOpenGLWidget
     //三个虚函数不需要makeCurrent，对应的操作已由框架完成
@@ -18,11 +19,13 @@ GLTriangle::~GLTriangle()
     //单独使用时去掉注释
     /*glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
+    glDeleteTextures(1, &texture);
     glDeleteProgram(shaderProgram);*/
     doneCurrent();
 }
 
-void GLTriangle::initializeGL()
+void GLTexture::initializeGL()
 {
     //QOpenGLFunctions
     //为当前上下文初始化opengl函数解析
@@ -30,16 +33,26 @@ void GLTriangle::initializeGL()
 
     //着色器代码
     //in输入，out输出,uniform从cpu向gpu发送
+    //OpenGL要求y轴0.0坐标是在图片的底部的，但是图片的y轴0.0坐标通常在顶部
+    //--这里对纹理坐标的y进行的取反
     const char *vertex_str=R"(#version 450
-layout (location = 0) in vec3 vertices;
+layout(location = 0) in vec3 inPos;
+layout(location = 1) in vec3 inColor;
+layout(location = 2) in vec2 inTexCoord;
+out vec3 theColor;
+out vec2 texCoord;
 void main() {
-gl_Position = vec4(vertices,1.0);
+gl_Position = vec4(inPos,1.0);
+theColor = inColor;
+texCoord = vec2(inTexCoord.x, 1-inTexCoord.y);
 })";
     const char *fragment_str=R"(#version 450
-uniform vec3 myColor;
+uniform sampler2D theTexture;
+in vec3 theColor;
+in vec2 texCoord;
 out vec4 fragColor;
 void main() {
-fragColor = vec4(myColor,1.0);
+fragColor = texture(theTexture, texCoord) * vec4(theColor, 1.0);
 })";
 
     //顶点着色器
@@ -83,23 +96,23 @@ fragColor = vec4(myColor,1.0);
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
 
-    //三角形的三个顶点
+    //从LearnOpenGL移植过来
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left
-        0.5f, -0.5f, 0.0f, // right
-        0.0f,  0.5f, 0.0f  // top
+        // positions          // colors           // texture coords
+        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,  0.0f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,  0.0f, 1.0f  // top left
     };
-    //【1】2014年8月12日，Khronos发布了OpenGL 4.5标准规范，
-    //其中ARB_direct_state_access扩展进入核心，
-    //其允许直接访问和修改OpenGL对象而无需绑定OpenGL对象（bind操作，例如glBindBuffer），
-    //提高应用程序和中间件的效率。
-    //【2】glGen*系列函数生成的id，内部并没有初始化那个对象的状态。只有到了glBind*的时候才会初始化。
-    //而Core/ARB的DSA直接提供了glCreate*系列函数，可以一步到位地建立id和初始化。
+    unsigned int indices[] = {
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
+    };
 
     //生成顶点数组对象
     //void glCreateVertexArrays(GLsizei n, GLuint *arrays);
     glCreateVertexArrays(1, &vao);
-    //生成缓冲区对象
+    //生成顶点缓冲对象
     //void glCreateBuffers(GLsizei n, GLuint *buffers);
     glCreateBuffers(1, &vbo);
     //分配size个存储单元存储数据或索引
@@ -118,10 +131,12 @@ fragColor = vec4(myColor,1.0);
     //参数3顶点缓冲对象
     //参数4缓冲区第一个元素的偏移
     //参数5缓冲区顶点步进，三角形一个点3个float
-    glVertexArrayVertexBuffer(vao, 0, vbo, 0, 3*sizeof(float));
+    glVertexArrayVertexBuffer(vao, 0, vbo, 0, 8*sizeof(float));
     //启用通用顶点 attribute 数组的 index 索引，对应layout location
     //glEnableVertexArrayAttrib(GLuint vaobj, GLuint index);
     glEnableVertexArrayAttrib(vao, 0);
+    glEnableVertexArrayAttrib(vao, 1);
+    glEnableVertexArrayAttrib(vao, 2);
     //指定顶点数组的组织
     //glVertexArrayAttribFormat(GLuint vaobj, GLuint attribindex,
     //                          GLint size, GLenum type,
@@ -133,6 +148,8 @@ fragColor = vec4(myColor,1.0);
     //参数5是否归一化
     //参数6顶点步进
     glVertexArrayAttribFormat(vao, 0, 3, GL_FLOAT, GL_FALSE, 0);
+    glVertexArrayAttribFormat(vao, 1, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float));
+    glVertexArrayAttribFormat(vao, 2, 2, GL_FLOAT, GL_FALSE, 6*sizeof(float));
     //关联顶点 attribute 属性和顶点缓冲区的绑定
     //glVertexArrayAttribBinding(GLuint vaobj, GLuint attribindex,
     //                           GLuint bindingindex);
@@ -140,35 +157,91 @@ fragColor = vec4(myColor,1.0);
     //参数2属性 attribute 索引，对应layout location
     //参数3vbo在vao的索引
     glVertexArrayAttribBinding(vao, 0, 0);
+    glVertexArrayAttribBinding(vao, 1, 0);
+    glVertexArrayAttribBinding(vao, 2, 0);
+
+    //生成索引缓冲对象
+    glCreateBuffers(1, &ebo);
+    //分配size个存储单元存储数据或索引
+    glNamedBufferStorage(ebo, sizeof(indices), indices, GL_DYNAMIC_STORAGE_BIT);
+    //ebo绑定到vao
+    //void glVertexArrayElementBuffer(GLuint vaobj, GLuint buffer);
+    glVertexArrayElementBuffer(vao, ebo);
+
+    //图片读取
+    QImage img(":/awesomeface.png");
+    img.convertTo(QImage::Format_RGBA8888);
+    //创建纹理对象
+    //void glCreateTextures(GLenum target, GLsizei n, GLuint *textures);
+    glCreateTextures(GL_TEXTURE_2D,1,&texture);
+    //设置纹理参数
+    //void glTextureParameteri(GLuint texture, GLenum pname, GLint param);
+    //GL_TEXTURE_WRAP设置纹理环绕方式，即超出纹理坐标怎么处理
+    //s\t\r对应x\y\z
+    //GL_REPEAT重复，GL_MIRRORED_REPEAT镜像重复，GL_CLAMP_TO_EDGE拉伸，GL_CLAMP_TO_BORDER无重复
+    glTextureParameteri(texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTextureParameteri(texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    //纹理过滤，怎样将纹理像素(Texture Pixel)映射到纹理坐标
+    //MIN对应Minify缩小，MAG对应Magnify放大
+    //GL_NEAREST临近值，GL_LINEAR线性插值
+    glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //定义贴图的使用内存大小
+    //void glTextureStorage2D(GLuint texture, GLsizei levels,
+    //                        GLenum internalformat, GLsizei width, GLsizei height);
+    //参数1纹理对象
+    //参数2levels和多级渐远相关
+    //参数3存储格式
+    //参数4宽度
+    //参数5高度
+    glTextureStorage2D(texture,1,GL_RGBA8,img.width(),img.height());
+    //加载纹理数据
+    //void glTextureSubImage2D(GLuint texture, GLint level,
+    //                         GLint xoffset, GLint yoffset,
+    //                         GLsizei width, GLsizei height, GLenum format,
+    //                         GLenum type, const void *pixels);
+    //参数1纹理对象
+    //参数2levels和多级渐远相关
+    //参数3纹理阵列中x方向上的纹理偏移
+    //参数4纹理阵列中y方向上的纹理偏移
+    //参数5纹理图像宽
+    //参数6纹理图像高
+    //参数7图像格式
+    //参数8像素数据类型
+    //参数9数据指针
+    glTextureSubImage2D(texture,0,0,0,img.width(),img.height(),GL_RGBA,GL_UNSIGNED_BYTE,img.bits());
 }
 
-void GLTriangle::paintGL()
+void GLTexture::paintGL()
 {
     //清屏设置
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    //当我们需要绘制透明图片时，就需要关闭GL_DEPTH_TEST并且打开混合glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    //基于源像素Alpha通道值的半透明混合函数
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     //安装所指定的程序对象程序作为当前再现状态的一部分
     glUseProgram(shaderProgram);
-    //传递值
-    glUniform3f(glGetUniformLocation(shaderProgram, "myColor"), 1.0f, 0.0f, 0.0f);
-    //绑定数组对象
-    glBindVertexArray(vao);
+
+    //激活纹理
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
     //使用当前激活的着色器和顶点属性配置和VBO（通过VAO间接绑定）来绘制图元
-    //void glDrawArrays(GLenum mode​, GLint first​, GLsizei count​);
-    //参数1为图元类型
-    //参数2指定顶点数组的起始索引
-    //参数3指定顶点个数
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-void GLTriangle::resizeGL(int width, int height)
+void GLTexture::resizeGL(int width, int height)
 {
     glViewport(0,0,width,height);
 }
 
-void GLTriangle::checkShaderError(GLuint id, const QString &type)
+void GLTexture::checkShaderError(GLuint id, const QString &type)
 {
     int check_flag;
     char check_info[1024];

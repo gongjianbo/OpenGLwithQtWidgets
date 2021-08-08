@@ -22,6 +22,9 @@
      <property name="tabShape">
       <enum>QTabWidget::Rounded</enum>
      </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
      <widget class="QWidget" name="tabTriangle">
       <attribute name="title">
        <string>Triangle</string>
@@ -41,10 +44,15 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabOther">
+     <widget class="QWidget" name="tabTexture">
       <attribute name="title">
-       <string>Tab 2</string>
+       <string>Texture</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="GLTexture" name="texture"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -70,6 +78,11 @@
    <class>GLElement</class>
    <extends>QOpenGLWidget</extends>
    <header>GLElement.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLTexture</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLTexture.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

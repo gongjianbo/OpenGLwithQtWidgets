@@ -13,9 +13,12 @@ GLTriangle330::~GLTriangle330()
     //三个虚函数不需要makeCurrent，对应的操作已由框架完成
     //但是释放时需要设置当前上下文
     makeCurrent();
-    glDeleteVertexArrays(1, &vao);
+    //释放的时候，如果该部件处于非当前显示的tab页，会异常退出
+    //（使用qt封装的类没有出现退出异常）
+    //单独使用时去掉注释
+    /*glDeleteVertexArrays(1, &vao);
     glDeleteBuffers(1, &vbo);
-    glDeleteProgram(shaderProgram);
+    glDeleteProgram(shaderProgram);*/
     doneCurrent();
 }
 
