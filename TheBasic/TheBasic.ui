@@ -23,7 +23,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabTriangle">
       <attribute name="title">
@@ -59,7 +59,7 @@
         <widget class="QOpenGLWidget" name="openGLWidget_2"/>
        </item>
        <item row="1" column="1">
-        <widget class="QOpenGLWidget" name="openGLWidget_3"/>
+        <widget class="GLTextureUnit" name="textureUnit"/>
        </item>
       </layout>
      </widget>
@@ -97,6 +97,11 @@
    <class>GLTexture330</class>
    <extends>QOpenGLWidget</extends>
    <header>GLTexture330.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLTextureUnit</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLTextureUnit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
