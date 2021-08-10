@@ -8,6 +8,9 @@ GLElement::GLElement(QWidget *parent)
 
 GLElement::~GLElement()
 {
+    //initializeGL在显示时才调用，释放未初始化的会异常
+    if(!isValid())
+        return;
     //QOpenGLWidget
     //三个虚函数不需要makeCurrent，对应的操作已由框架完成
     //但是释放时需要设置当前上下文
