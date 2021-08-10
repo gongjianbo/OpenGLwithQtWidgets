@@ -1,21 +1,21 @@
 #pragma once
 #include <QOpenGLWidget>
-#include <QOpenGLFunctions_4_5_Compatibility>
+#include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
 
-//纹理渲染
+//OpenGL3.3纹理渲染
 //QOpenGLWidget窗口上下文
 //QOpenGLFunctions访问OpenGL接口，可以不继承作为成员变量使用
-class GLTexture
+class GLTexture330
         : public QOpenGLWidget
-        , protected QOpenGLFunctions_4_5_Compatibility
+        , protected QOpenGLFunctions_3_3_Core
 {
 public:
-    explicit GLTexture(QWidget *parent = nullptr);
-    ~GLTexture();
+    explicit GLTexture330(QWidget *parent = nullptr);
+    ~GLTexture330();
 
 protected:
     //【】继承QOpenGLWidget后重写这三个虚函数
@@ -37,4 +37,5 @@ signals:
     GLuint ebo = 0;
     GLuint texture = 0;
 };
+
 

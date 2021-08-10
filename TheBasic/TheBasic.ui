@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>839</width>
-    <height>521</height>
+    <width>798</width>
+    <height>546</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,9 +48,18 @@
       <attribute name="title">
        <string>Texture</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
         <widget class="GLTexture" name="texture"/>
+       </item>
+       <item row="0" column="1">
+        <widget class="GLTexture330" name="texture330"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QOpenGLWidget" name="openGLWidget_2"/>
+       </item>
+       <item row="1" column="1">
+        <widget class="QOpenGLWidget" name="openGLWidget_3"/>
        </item>
       </layout>
      </widget>
@@ -83,6 +92,11 @@
    <class>GLTexture</class>
    <extends>QOpenGLWidget</extends>
    <header>GLTexture.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLTexture330</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLTexture330.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
