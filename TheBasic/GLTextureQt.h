@@ -6,16 +6,16 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
 
-//OpenGL3.3纹理渲染
+//OpenGL Qt封装的类进行纹理渲染
 //QOpenGLWidget窗口上下文
 //QOpenGLFunctions访问OpenGL接口，可以不继承作为成员变量使用
-class GLTexture330
+class GLTextureQt
         : public QOpenGLWidget
         , protected QOpenGLFunctions_3_3_Core
 {
 public:
-    explicit GLTexture330(QWidget *parent = nullptr);
-    ~GLTexture330();
+    explicit GLTextureQt(QWidget *parent = nullptr);
+    ~GLTextureQt();
 
 protected:
     //【】继承QOpenGLWidget后重写这三个虚函数
@@ -30,12 +30,16 @@ private:
     void checkShaderError(GLuint id, const QString &type);
 
 private:
-    //使用原生接口操作
-    GLuint shaderProgram = 0;
-    GLuint vao = 0;
-    GLuint vbo = 0;
-    GLuint ebo = 0;
-    GLuint texture = 0;
+    //着色器程序
+    QOpenGLShaderProgram shaderProgram;
+    //顶点数组对象
+    QOpenGLVertexArrayObject vao;
+    //顶点缓冲
+    QOpenGLBuffer vbo;
+    //索引缓冲
+    QOpenGLBuffer ebo;
+    //纹理（因为不能赋值，所以只能声明为指针）
+    QOpenGLTexture *texture = nullptr;
 };
 
 

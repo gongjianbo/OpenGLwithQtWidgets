@@ -29,7 +29,7 @@ protected:
 private:
     void checkShaderError(GLuint id, const QString &type);
 
-signals:
+private:
     //使用原生接口操作
     GLuint shaderProgram = 0;
     GLuint vao = 0;
