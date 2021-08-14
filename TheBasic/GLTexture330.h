@@ -31,11 +31,11 @@ private:
 
 private:
     //使用原生接口操作
-    GLuint shaderProgram = 0;
-    GLuint vao = 0;
-    GLuint vbo = 0;
-    GLuint ebo = 0;
-    GLuint texture = 0;
+    GLuint shaderProgram{ 0 };
+    GLuint vao{ 0 };
+    GLuint vbo{ 0 };
+    GLuint ebo{ 0 };
+    GLuint texture{ 0 };
 };
 
 

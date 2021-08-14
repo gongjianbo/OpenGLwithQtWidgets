@@ -36,6 +36,6 @@ private:
     //索引缓冲
     QOpenGLBuffer ebo;
     //纹理（因为不能赋值，所以只能声明为指针）
-    QOpenGLTexture *texture1 = nullptr;
-    QOpenGLTexture *texture2 = nullptr;
+    QOpenGLTexture *texture1{ nullptr };
+    QOpenGLTexture *texture2{ nullptr };
 };

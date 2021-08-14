@@ -27,7 +27,7 @@ private:
 
 private:
     //还没使用Qt的封装
-    GLuint shaderProgram = 0;
-    GLuint vao = 0;
-    GLuint vbo = 0;
+    GLuint shaderProgram{ 0 };
+    GLuint vao{ 0 };
+    GLuint vbo{ 0 };
 };
