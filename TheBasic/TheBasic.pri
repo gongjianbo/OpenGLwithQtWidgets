@@ -7,6 +7,7 @@ HEADERS += \
     $$PWD/GLTexture330.h \
     $$PWD/GLTextureQt.h \
     $$PWD/GLTextureUnit.h \
+    $$PWD/GLTransform.h \
     $$PWD/GLTriangle.h \
     $$PWD/GLTriangle330.h \
     $$PWD/GLTriangleQt.h \
@@ -18,6 +19,7 @@ SOURCES += \
     $$PWD/GLTexture330.cpp \
     $$PWD/GLTextureQt.cpp \
     $$PWD/GLTextureUnit.cpp \
+    $$PWD/GLTransform.cpp \
     $$PWD/GLTriangle.cpp \
     $$PWD/GLTriangle330.cpp \
     $$PWD/GLTriangleQt.cpp \

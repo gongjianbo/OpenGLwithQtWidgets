@@ -23,7 +23,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabTriangle">
       <attribute name="title">
@@ -60,6 +60,16 @@
        </item>
        <item row="1" column="1">
         <widget class="GLTextureUnit" name="textureUnit"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabTransform">
+      <attribute name="title">
+       <string>Transform</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="GLTransform" name="transform"/>
        </item>
       </layout>
      </widget>
@@ -107,6 +117,11 @@
    <class>GLTextureQt</class>
    <extends>QOpenGLWidget</extends>
    <header>GLTextureQt.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLTransform</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLTransform.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
