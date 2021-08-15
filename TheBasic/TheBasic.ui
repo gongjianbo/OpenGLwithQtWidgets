@@ -23,7 +23,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabTriangle">
       <attribute name="title">
@@ -70,6 +70,16 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="GLTransform" name="transform"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabCoordinate">
+      <attribute name="title">
+       <string>Coordinate</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="GLCoordinate" name="coordinate"/>
        </item>
       </layout>
      </widget>
@@ -122,6 +132,11 @@
    <class>GLTransform</class>
    <extends>QOpenGLWidget</extends>
    <header>GLTransform.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLCoordinate</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLCoordinate.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

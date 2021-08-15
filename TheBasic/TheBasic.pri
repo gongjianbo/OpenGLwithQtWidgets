@@ -2,6 +2,7 @@ FORMS += \
     $$PWD/TheBasic.ui
 
 HEADERS += \
+    $$PWD/GLCoordinate.h \
     $$PWD/GLElement.h \
     $$PWD/GLTexture.h \
     $$PWD/GLTexture330.h \
@@ -14,6 +15,7 @@ HEADERS += \
     $$PWD/TheBasic.h
 
 SOURCES += \
+    $$PWD/GLCoordinate.cpp \
     $$PWD/GLElement.cpp \
     $$PWD/GLTexture.cpp \
     $$PWD/GLTexture330.cpp \
