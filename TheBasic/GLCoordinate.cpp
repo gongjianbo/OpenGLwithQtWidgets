@@ -169,6 +169,8 @@ fragColor = mix(texture(texture1, texCoord), texture(texture2, texCoord), 0.2);
     shaderProgram.setUniformValue("texture2", 1);
 
     QMatrix4x4 view; //观察矩阵，后退一点
+    //OpenGL本身没有摄像机(Camera)的概念，但我们可以通过把场景中的所有物体往相反方向移动的方式来模拟出摄像机，
+    //产生一种我们在移动的感觉，而不是场景在移动。
     view.translate(QVector3D(0.0f, 0.0f, -3.0f));
     shaderProgram.setUniformValue("view", view);
     QMatrix4x4 projection; //透视投影
