@@ -23,7 +23,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabTriangle">
       <attribute name="title">
@@ -93,6 +93,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabCamera">
+      <attribute name="title">
+       <string>Camera</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="GLCamera" name="camera"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -152,6 +162,11 @@
    <class>MyCoordinate</class>
    <extends>QOpenGLWidget</extends>
    <header>MyCoordinate.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLCamera</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLCamera.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

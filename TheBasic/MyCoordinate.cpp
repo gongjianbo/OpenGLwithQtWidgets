@@ -174,6 +174,7 @@ fragColor = vec4(theColor, 1.0);
     //参数2：指定你的视景体的宽高比
     //参数3：指定观察者到视景体的最近的裁剪面的距离（正数）
     //参数4：指定观察者到视景体最远的裁剪面距离（正数）
+    //bug：这个时候获取到的width-height可能不是最终的，可以放到paintGL中
     projection.perspective(45.0f, 1.0f * width() / height(), 0.1f, 100.0f);
     shaderProgram.setUniformValue("projection", projection);
     shaderProgram.release();
@@ -182,7 +183,7 @@ fragColor = vec4(theColor, 1.0);
 void MyCoordinate::paintGL()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    //因为我们使用了深度测试，我们也想要在每次渲染迭代之前清除深度缓冲
+    //因为我们使用了深度测试，需要在每次渲染迭代之前清除深度缓冲
     //（否则前一帧的深度信息仍然保存在缓冲中）
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

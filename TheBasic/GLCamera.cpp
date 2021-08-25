@@ -1,8 +1,7 @@
-#include "GLCoordinate.h"
-#include <QMatrix4x4>
-#include <QDebug>
+#include "GLCamera.h"
+#include <cmath>
 
-GLCoordinate::GLCoordinate(QWidget *parent)
+GLCamera::GLCamera(QWidget *parent)
     : QOpenGLWidget(parent)
 {
     connect(&timer,&QTimer::timeout,this,[this](){
@@ -12,9 +11,12 @@ GLCoordinate::GLCoordinate(QWidget *parent)
         }
     });
     timer.setInterval(50);
+
+    setFocusPolicy(Qt::ClickFocus); //默认没有焦点
+    calculateCamera();
 }
 
-GLCoordinate::~GLCoordinate()
+GLCamera::~GLCamera()
 {
     //initializeGL在显示时才调用，释放未初始化的会异常
     if(!isValid())
@@ -30,7 +32,7 @@ GLCoordinate::~GLCoordinate()
     doneCurrent();
 }
 
-void GLCoordinate::initializeGL()
+void GLCamera::initializeGL()
 {
     //为当前上下文初始化OpenGL函数解析
     initializeOpenGLFunctions();
@@ -167,22 +169,6 @@ fragColor = mix(texture(texture1, texCoord), texture(texture2, texCoord), 0.2);
     shaderProgram.bind();
     shaderProgram.setUniformValue("texture1", 0);
     shaderProgram.setUniformValue("texture2", 1);
-
-    QMatrix4x4 view; //观察矩阵，后退一点
-    //OpenGL本身没有摄像机(Camera)的概念，但我们可以通过把场景中的所有物体往相反方向移动的方式来模拟出摄像机，
-    //产生一种我们在移动的感觉，而不是场景在移动。
-    view.translate(QVector3D(0.0f, 0.0f, -3.0f));
-    shaderProgram.setUniformValue("view", view);
-    QMatrix4x4 projection; //透视投影
-    //坐标到达观察空间之后，我们需要将其投影到裁剪坐标。
-    //裁剪坐标会被处理至-1.0到1.0的范围内，并判断哪些顶点将会出现在屏幕上
-    //参数1：指定视景体的视野的角度
-    //参数2：指定你的视景体的宽高比
-    //参数3：指定观察者到视景体的最近的裁剪面的距离（正数）
-    //参数4：指定观察者到视景体最远的裁剪面距离（正数）
-    //bug：这个时候获取到的width-height可能不是最终的，可以放到paintGL中
-    projection.perspective(45.0f, 1.0f * width() / height(), 0.1f, 100.0f);
-    shaderProgram.setUniformValue("projection", projection);
     shaderProgram.release();
 
     timer.start();
@@ -202,17 +188,14 @@ static QVector3D cubePositions[] = {
     QVector3D(-1.3f,  1.0f, -1.5f)
 };
 
-void GLCoordinate::paintGL()
+void GLCamera::paintGL()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     //因为我们使用了深度测试，需要在每次渲染迭代之前清除深度缓冲
     //（否则前一帧的深度信息仍然保存在缓冲中）
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //OpenGL存储它的所有深度信息于一个Z缓冲(Z-buffer)中，也被称为深度缓冲(Depth Buffer)。
-    //深度值存储在每个片段里面（作为片段的z值），当片段想要输出它的颜色时，OpenGL会将它的深度值和z缓冲进行比较，
-    //如果当前的片段在其它片段之后，它将会被丢弃，否则将会覆盖。
-    //这个过程称为深度测试(Depth Testing)，它是由OpenGL自动完成的。
+    //Z缓冲(Z-buffer)，也被称为深度缓冲(Depth Buffer)
     //（不开启深度缓冲的话，盒子的纹理堆叠顺序就是乱的）
     glEnable(GL_DEPTH_TEST); //默认关闭的
 
@@ -224,6 +207,28 @@ void GLCoordinate::paintGL()
 
     shaderProgram.bind();
     vao.bind();
+
+    /*//观察矩阵
+    QMatrix4x4 view;
+    //3个相互垂直的轴和一个定义摄像机空间的位置坐标
+    //void QMatrix4x4::lookAt(const QVector3D &eye, const QVector3D &center, const QVector3D &up)
+    //第一组参数：eyex, eyey,eyez 相机在世界坐标的位置
+    //第二组参数：centerx,centery,centerz 相机镜头对准的物体在世界坐标的位置
+    //第三组参数：upx,upy,upz 相机向上的方向在世界坐标中的方向，(0,-1,0)就旋转了190度
+    view.lookAt(cameraPosition,
+                cameraPosition+cameraFront,
+                cameraUp);
+    shaderProgram.setUniformValue("view", view);*/
+    shaderProgram.setUniformValue("view", getViewMatrix());
+    //透视投影
+    QMatrix4x4 projection;
+    //void QMatrix4x4::perspective(float verticalAngle, float aspectRatio, float nearPlane, float farPlane)
+    //参数1视野，即观察空间大小
+    //参数2宽高比
+    //参数3平截头体近距离，参数4平截头体远距离
+    //近平面和远平面内且处于平截头体内的顶点都会被渲染
+    projection.perspective(projectionFovy, 1.0f * width() / height(), 0.1f, 100.0f);
+    shaderProgram.setUniformValue("projection", projection);
     for (unsigned int i = 0; i < 10; i++) {
         //计算模型矩阵
         QMatrix4x4 model;
@@ -244,7 +249,99 @@ void GLCoordinate::paintGL()
     shaderProgram.release();
 }
 
-void GLCoordinate::resizeGL(int width, int height)
+void GLCamera::resizeGL(int width, int height)
 {
     glViewport(0, 0, width, height);
+}
+
+void GLCamera::keyPressEvent(QKeyEvent *event)
+{
+    event->accept();
+    switch (event->key()) {
+    case Qt::Key_W: //上
+        cameraPosition -= cameraWorldUp * cameraSpeed;
+        break;
+    case Qt::Key_S://下
+        cameraPosition += cameraWorldUp * cameraSpeed;
+        break;
+    case Qt::Key_A: //左
+        cameraPosition += cameraRight * cameraSpeed;
+        break;
+    case Qt::Key_D: //右
+        cameraPosition -= cameraRight * cameraSpeed;
+        break;
+    case Qt::Key_E://近
+        cameraPosition += cameraFront * cameraSpeed;
+        break;
+    case Qt::Key_Q: //远
+        cameraPosition -= cameraFront * cameraSpeed;
+        break;
+    default:
+        break;
+    }
+    update();
+}
+
+void GLCamera::mousePressEvent(QMouseEvent *event)
+{
+    event->accept();
+    mousePos = event->pos();
+}
+
+void GLCamera::mouseReleaseEvent(QMouseEvent *event)
+{
+    event->accept();
+}
+
+void GLCamera::mouseMoveEvent(QMouseEvent *event)
+{
+    event->accept();
+    int x_offset = event->pos().x()-mousePos.x();
+    int y_offset = event->pos().y()-mousePos.y();
+    mousePos = event->pos();
+    eulerYaw -= x_offset*cameraSensitivity;
+    eulerPitch += y_offset*cameraSensitivity;
+
+    if (eulerPitch > 89.0f)
+        eulerPitch = 89.0f;
+    else if (eulerPitch < -89.0f)
+        eulerPitch = -89.0f;
+    calculateCamera();
+    update();
+}
+
+void GLCamera::wheelEvent(QWheelEvent *event)
+{
+    event->accept();
+    //fovy越小，模型看起来越大
+    if(event->delta() < 0){
+        //鼠标向下滑动为-，这里作为zoom out
+        projectionFovy += cameraSpeed;
+        if(projectionFovy > 90)
+            projectionFovy = 90;
+    }else{
+        //鼠标向上滑动为+，这里作为zoom in
+        projectionFovy -= cameraSpeed;
+        if(projectionFovy < 1)
+            projectionFovy = 1;
+    }
+    update();
+}
+
+void GLCamera::calculateCamera()
+{
+    QVector3D front;
+    front.setX(std::cos(eulerYaw) * std::cos(eulerPitch));
+    front.setY(std::sin(eulerPitch));
+    front.setZ(std::sin(eulerYaw) * std::cos(eulerPitch));
+    cameraFront = front.normalized();
+    cameraRight = QVector3D::crossProduct(cameraFront, cameraWorldUp).normalized();
+    cameraUp = QVector3D::crossProduct(cameraRight, cameraFront).normalized();
+}
+
+QMatrix4x4 GLCamera::getViewMatrix()
+{
+    QMatrix4x4 view; //观察矩阵
+    view.lookAt(cameraPosition ,cameraPosition+cameraFront, cameraUp);
+    return view;
 }
