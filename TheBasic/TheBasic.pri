@@ -13,6 +13,7 @@ HEADERS += \
     $$PWD/GLTriangle.h \
     $$PWD/GLTriangle330.h \
     $$PWD/GLTriangleQt.h \
+    $$PWD/MyCamera.h \
     $$PWD/MyCoordinate.h \
     $$PWD/TheBasic.h
 
@@ -28,5 +29,6 @@ SOURCES += \
     $$PWD/GLTriangle.cpp \
     $$PWD/GLTriangle330.cpp \
     $$PWD/GLTriangleQt.cpp \
+    $$PWD/MyCamera.cpp \
     $$PWD/MyCoordinate.cpp \
     $$PWD/TheBasic.cpp
