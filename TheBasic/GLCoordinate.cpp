@@ -173,16 +173,7 @@ fragColor = mix(texture(texture1, texCoord), texture(texture2, texCoord), 0.2);
     //产生一种我们在移动的感觉，而不是场景在移动。
     view.translate(QVector3D(0.0f, 0.0f, -3.0f));
     shaderProgram.setUniformValue("view", view);
-    QMatrix4x4 projection; //透视投影
-    //坐标到达观察空间之后，我们需要将其投影到裁剪坐标。
-    //裁剪坐标会被处理至-1.0到1.0的范围内，并判断哪些顶点将会出现在屏幕上
-    //参数1：指定视景体的视野的角度
-    //参数2：指定你的视景体的宽高比
-    //参数3：指定观察者到视景体的最近的裁剪面的距离（正数）
-    //参数4：指定观察者到视景体最远的裁剪面距离（正数）
-    //bug：这个时候获取到的width-height可能不是最终的，可以放到paintGL中
-    projection.perspective(45.0f, 1.0f * width() / height(), 0.1f, 100.0f);
-    shaderProgram.setUniformValue("projection", projection);
+    //透视投影现在放到paintGL
     shaderProgram.release();
 
     timer.start();
@@ -224,6 +215,16 @@ void GLCoordinate::paintGL()
 
     shaderProgram.bind();
     vao.bind();
+
+    QMatrix4x4 projection; //透视投影
+    //坐标到达观察空间之后，我们需要将其投影到裁剪坐标。
+    //裁剪坐标会被处理至-1.0到1.0的范围内，并判断哪些顶点将会出现在屏幕上
+    //参数1：指定视景体的视野的角度
+    //参数2：指定你的视景体的宽高比
+    //参数3：指定观察者到视景体的最近的裁剪面的距离（正数）
+    //参数4：指定观察者到视景体最远的裁剪面距离（正数）
+    projection.perspective(45.0f, 1.0f * width() / height(), 0.1f, 100.0f);
+    shaderProgram.setUniformValue("projection", projection);
     for (unsigned int i = 0; i < 10; i++) {
         //计算模型矩阵
         QMatrix4x4 model;
