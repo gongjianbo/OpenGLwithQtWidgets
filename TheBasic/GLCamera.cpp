@@ -1,5 +1,6 @@
 #include "GLCamera.h"
 #include <cmath>
+#include <QtMath>
 
 GLCamera::GLCamera(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -215,8 +216,8 @@ void GLCamera::paintGL()
     //第一组参数：eyex, eyey,eyez 相机在世界坐标的位置
     //第二组参数：centerx,centery,centerz 相机镜头对准的物体在世界坐标的位置
     //第三组参数：upx,upy,upz 相机向上的方向在世界坐标中的方向，(0,-1,0)就旋转了190度
-    view.lookAt(cameraPosition,
-                cameraPosition+cameraFront,
+    view.lookAt(cameraPos,
+                cameraPos+cameraFront,
                 cameraUp);
     shaderProgram.setUniformValue("view", view);*/
     shaderProgram.setUniformValue("view", getViewMatrix());
@@ -257,24 +258,25 @@ void GLCamera::resizeGL(int width, int height)
 void GLCamera::keyPressEvent(QKeyEvent *event)
 {
     event->accept();
+    //横向是移动，不是绕0点
     switch (event->key()) {
-    case Qt::Key_W: //上
-        cameraPosition -= cameraWorldUp * cameraSpeed;
+    case Qt::Key_W: //摄像机往上，场景往下
+        cameraPos -= QVector3D::crossProduct(cameraFront, cameraRight).normalized() * cameraSpeed;
         break;
-    case Qt::Key_S://下
-        cameraPosition += cameraWorldUp * cameraSpeed;
+    case Qt::Key_S: //摄像机往下，场景往上
+        cameraPos += QVector3D::crossProduct(cameraFront, cameraRight).normalized() * cameraSpeed;
         break;
-    case Qt::Key_A: //左
-        cameraPosition += cameraRight * cameraSpeed;
+    case Qt::Key_A: //摄像机往左，场景往右
+        cameraPos -= QVector3D::crossProduct(cameraFront, cameraUp).normalized() * cameraSpeed;
         break;
-    case Qt::Key_D: //右
-        cameraPosition -= cameraRight * cameraSpeed;
+    case Qt::Key_D: //摄像机往右，场景往左
+        cameraPos += QVector3D::crossProduct(cameraFront, cameraUp).normalized() * cameraSpeed;
         break;
-    case Qt::Key_E://近
-        cameraPosition += cameraFront * cameraSpeed;
+    case Qt::Key_E: //远
+        cameraPos -= cameraFront * cameraSpeed;
         break;
-    case Qt::Key_Q: //远
-        cameraPosition -= cameraFront * cameraSpeed;
+    case Qt::Key_Q: //近
+        cameraPos += cameraFront * cameraSpeed;
         break;
     default:
         break;
@@ -299,8 +301,10 @@ void GLCamera::mouseMoveEvent(QMouseEvent *event)
     int x_offset = event->pos().x()-mousePos.x();
     int y_offset = event->pos().y()-mousePos.y();
     mousePos = event->pos();
-    eulerYaw -= x_offset*cameraSensitivity;
-    eulerPitch += y_offset*cameraSensitivity;
+    //y轴的坐标是从下往上，所以相反
+    //我这里移动的是摄像机，所以场景往相反方向动
+    eulerYaw += x_offset*cameraSensitivity;
+    eulerPitch -= y_offset*cameraSensitivity;
 
     if (eulerPitch > 89.0f)
         eulerPitch = 89.0f;
@@ -330,18 +334,20 @@ void GLCamera::wheelEvent(QWheelEvent *event)
 
 void GLCamera::calculateCamera()
 {
+    //角度转弧度
+    //2021-8-29 之前没转为弧度制，导致初始位置不对
+    const float yaw = qDegreesToRadians(eulerYaw);
+    const float pitch = qDegreesToRadians(eulerPitch);
     QVector3D front;
-    front.setX(std::cos(eulerYaw) * std::cos(eulerPitch));
-    front.setY(std::sin(eulerPitch));
-    front.setZ(std::sin(eulerYaw) * std::cos(eulerPitch));
+    front.setX(std::cos(yaw) * std::cos(pitch));
+    front.setY(std::sin(pitch));
+    front.setZ(std::sin(yaw) * std::cos(pitch));
     cameraFront = front.normalized();
-    cameraRight = QVector3D::crossProduct(cameraFront, cameraWorldUp).normalized();
-    cameraUp = QVector3D::crossProduct(cameraRight, cameraFront).normalized();
 }
 
 QMatrix4x4 GLCamera::getViewMatrix()
 {
     QMatrix4x4 view; //观察矩阵
-    view.lookAt(cameraPosition ,cameraPosition+cameraFront, cameraUp);
+    view.lookAt(cameraPos, cameraPos+cameraFront, cameraUp);
     return view;
 }

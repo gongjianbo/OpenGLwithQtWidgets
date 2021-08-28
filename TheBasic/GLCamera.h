@@ -59,20 +59,18 @@ private:
 
     //操作View，我这里为了展示没有封装成单独的Camera类
     //Camera Attributes
-    QVector3D cameraPosition{ 0.0f, 0.0f, 3.0f };
-    QVector3D cameraFront{ -cameraPosition };
+    QVector3D cameraPos{ 0.0f, 0.0f, 3.0f };
+    QVector3D cameraFront{ 0.0f, 0.0f, -1.0f };
     QVector3D cameraUp{ 0.0f, 1.0f, 0.0f };
-    QVector3D cameraRight{ };
-    QVector3D cameraWorldUp{ cameraUp };
+    QVector3D cameraRight{ 1.0f, 0.0f, 0.0f };
     //Euler Angles
     //偏航角如果是0.0f,指向的是 x轴正方向，即右方向，所以向里转90度，初始方向指向z轴负方向
-    //（这里有个问题，教程是90，但是算出来整体向右偏移了）
-    float eulerYaw{ -89.5f }; //x偏航角
-    float eulerPitch{ 0.0f }; //y俯仰角
+    float eulerYaw{ -90.0f }; //偏航角，绕y左右转
+    float eulerPitch{ 0.0f }; //俯仰角，绕x上下转
     //Camera options
-    float cameraSpeed{ 2.0f };
-    float cameraSensitivity{ 0.01f };
-    float projectionFovy{ 45.0f }; //透视投影的fovy参数
+    float cameraSpeed{ 0.5f }; //移动速度
+    float cameraSensitivity{ 0.1f }; //鼠标拖动灵敏度
+    float projectionFovy{ 45.0f }; //透视投影的fovy参数，视野范围
     //鼠标位置
     QPoint mousePos;
 };
