@@ -15,6 +15,7 @@ HEADERS += \
     $$PWD/GLTriangleQt.h \
     $$PWD/MyCamera.h \
     $$PWD/MyCoordinate.h \
+    $$PWD/MyQuaternion.h \
     $$PWD/TheBasic.h
 
 SOURCES += \
@@ -31,4 +32,5 @@ SOURCES += \
     $$PWD/GLTriangleQt.cpp \
     $$PWD/MyCamera.cpp \
     $$PWD/MyCoordinate.cpp \
+    $$PWD/MyQuaternion.cpp \
     $$PWD/TheBasic.cpp
