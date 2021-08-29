@@ -206,6 +206,7 @@ void MyCoordinate::paintGL()
     //model.rotate(30, QVector3D(0.0f, 0.0f, 1.0f));
     //传入着色器并绘制
     shaderProgram.setUniformValue("model", modelMat);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
     vao.release();
     shaderProgram.release();

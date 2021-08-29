@@ -5,11 +5,13 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
+#include <QVector3D>
+#include <QMatrix4x4>
+#include <QQuaternion>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QTimer>
-#include <QMatrix4x4>
 
 //摄像机练习（观察矩阵）
 //QOpenGLWidget窗口上下文

@@ -2,7 +2,7 @@
 #include <cmath>
 
 //着色器代码
-const char *coord_vertex=R"(#version 330 core
+static const char *coord_vertex=R"(#version 330 core
 layout (location = 0) in vec3 inPos;
 layout (location = 1) in vec3 inColor;
 uniform mat4 model;
@@ -15,7 +15,7 @@ theColor = inColor;
 gl_Position = projection * view * model * vec4(inPos, 1.0);
 })";
 
-const char *coord_fragment=R"(#version 330 core
+static const char *coord_fragment=R"(#version 330 core
 in vec3 theColor;
 out vec4 fragColor;
 void main()
@@ -23,7 +23,7 @@ void main()
 fragColor = vec4(theColor, 1.0);
 })";
 
-const char *box_vertex=R"(#version 330 core
+static const char *box_vertex=R"(#version 330 core
 layout (location = 0) in vec3 inPos;
 layout (location = 1) in vec2 inTexCoord;
 uniform mat4 model;
@@ -36,7 +36,7 @@ gl_Position = projection * view * model * vec4(inPos, 1.0);
 texCoord = vec2(inTexCoord.x, 1-inTexCoord.y);
 })";
 
-const char *box_fragment=R"(#version 330 core
+static const char *box_fragment=R"(#version 330 core
 in vec2 texCoord;
 uniform sampler2D texture1;
 uniform sampler2D texture2;
@@ -149,8 +149,8 @@ MyCamera::~MyCamera()
     //三个虚函数不需要makeCurrent，对应的操作已由框架完成
     //但是释放时需要设置当前上下文
     makeCurrent();
-    /*coordVbo.destroy();
-    coordVao.destroy();*/
+    coordVbo.destroy();
+    coordVao.destroy();
     boxVbo.destroy();
     boxVao.destroy();
     delete texture1;
