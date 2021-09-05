@@ -23,7 +23,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>7</number>
+      <number>8</number>
      </property>
      <widget class="QWidget" name="tabTriangle">
       <attribute name="title">
@@ -113,6 +113,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabPoker">
+      <attribute name="title">
+       <string>Poker</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="MyPoker" name="poker"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabQuaternion">
       <attribute name="title">
        <string>Quaternion</string>
@@ -197,6 +207,11 @@
    <class>MyQuaternion</class>
    <extends>QOpenGLWidget</extends>
    <header>MyQuaternion.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyPoker</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyPoker.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

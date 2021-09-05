@@ -352,11 +352,9 @@ void MyQuaternion::mouseMoveEvent(QMouseEvent *event)
     QVector2D diff = QVector2D(event->pos()) - QVector2D(mousePos);
     mousePos = event->pos();
     QVector3D n = QVector3D(diff.y(), diff.x(), 0.0).normalized();
-    float speed = 1.0f;
-    //qreal acc = diff.length() / 100.0;
-    //rotationAxis = (rotationAxis * speed + n * acc).normalized();
-    rotationAxis = (rotationAxis * speed + n).normalized();
-    rotationQuat = QQuaternion::fromAxisAndAngle(rotationAxis, speed) * rotationQuat;
+    rotationAxis = (rotationAxis + n).normalized();
+    //不能对换乘的顺序
+    rotationQuat = QQuaternion::fromAxisAndAngle(rotationAxis, 2.0f) * rotationQuat;
 
     update();
 }

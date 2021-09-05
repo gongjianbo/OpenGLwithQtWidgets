@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>awesomeface.png</file>
         <file>container.jpg</file>
+        <file>liuyifei.png</file>
     </qresource>
 </RCC>
