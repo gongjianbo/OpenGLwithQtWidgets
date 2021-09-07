@@ -153,8 +153,8 @@ MyQuaternion::~MyQuaternion()
     //三个虚函数不需要makeCurrent，对应的操作已由框架完成
     //但是释放时需要设置当前上下文
     makeCurrent();
-    /*coordVbo.destroy();
-    coordVao.destroy();*/
+    coordVbo.destroy();
+    coordVao.destroy();
     boxVbo.destroy();
     boxVao.destroy();
     delete texture1;

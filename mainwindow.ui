@@ -18,16 +18,16 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="TheBasic" name="tabBasic">
        <attribute name="title">
         <string>Basic</string>
        </attribute>
       </widget>
-      <widget class="QWidget" name="tabOther">
+      <widget class="TheLighting" name="tabLighting">
        <attribute name="title">
-        <string>Other</string>
+        <string>Lighting</string>
        </attribute>
       </widget>
      </widget>
@@ -51,6 +51,12 @@
    <class>TheBasic</class>
    <extends>QWidget</extends>
    <header>TheBasic.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TheLighting</class>
+   <extends>QWidget</extends>
+   <header>TheLighting.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
