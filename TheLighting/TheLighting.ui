@@ -16,15 +16,28 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
-     <widget class="GLColors" name="tabColors">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tabColors">
       <attribute name="title">
        <string>Colors</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="GLColors" name="colors"/>
+       </item>
+      </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tabLighting">
       <attribute name="title">
-       <string>Tab 2</string>
+       <string>Lighting</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="GLBasicLighting" name="lighting"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -33,9 +46,13 @@
  <customwidgets>
   <customwidget>
    <class>GLColors</class>
-   <extends>QWidget</extends>
+   <extends>QOpenGLWidget</extends>
    <header>GLColors.h</header>
-   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GLBasicLighting</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLBasicLighting.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

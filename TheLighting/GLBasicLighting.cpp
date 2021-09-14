@@ -1,15 +1,21 @@
-#include "GLColors.h"
+#include "GLBasicLighting.h"
 #include <cmath>
 #include <QtMath>
 #include <QDebug>
 
-GLColors::GLColors(QWidget *parent)
+GLBasicLighting::GLBasicLighting(QWidget *parent)
     : QOpenGLWidget(parent)
 {
-
+    connect(&timer,&QTimer::timeout,this,[this](){
+        rotate+=2;
+        if(isVisible()){
+            update();
+        }
+    });
+    timer.setInterval(50);
 }
 
-GLColors::~GLColors()
+GLBasicLighting::~GLBasicLighting()
 {
     //initializeGL在显示时才调用，释放未初始化的会异常
     if(!isValid())
@@ -24,55 +30,55 @@ GLColors::~GLColors()
     doneCurrent();
 }
 
-void GLColors::initializeGL()
+void GLBasicLighting::initializeGL()
 {
     //为当前上下文初始化OpenGL函数解析
     initializeOpenGLFunctions();
     initShader();
 
-    //方块的顶点
+    //方块的顶点和法向量
     float vertices[] = {
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-        -0.5f, -0.5f,  0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
 
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-        -0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
     vbo=QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
@@ -84,8 +90,10 @@ void GLColors::initializeGL()
     vbo.bind();
     vbo.allocate(vertices,sizeof(vertices));
     //setAttributeBuffer(int location, GLenum type, int offset, int tupleSize, int stride = 0)
-    lightingShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 3);
+    lightingShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 6);
     lightingShader.enableAttributeArray(0);
+    lightingShader.setAttributeBuffer(1, GL_FLOAT, sizeof(GLfloat) * 3, 3, sizeof(GLfloat) * 6);
+    lightingShader.enableAttributeArray(1);
     vbo.release();
     lightingVao.release();
 
@@ -94,13 +102,15 @@ void GLColors::initializeGL()
     lampVao.bind();
     vbo.bind();
     //setAttributeBuffer(int location, GLenum type, int offset, int tupleSize, int stride = 0)
-    lampShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 3);
+    lampShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 6);
     lampShader.enableAttributeArray(0);
     vbo.release();
     lampVao.release();
+
+    timer.start();
 }
 
-void GLColors::paintGL()
+void GLBasicLighting::paintGL()
 {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     //清除深度缓冲
@@ -122,8 +132,20 @@ void GLColors::paintGL()
     projection.perspective(projectionFovy, 1.0f * width() / height(), 0.1f, 100.0f);
     lightingShader.setUniformValue("projection", projection);
     QMatrix4x4 model;//模型矩阵
-    model.rotate(30, QVector3D(1.0f, 1.0f, 0.0f));
+    //model.rotate(30, QVector3D(1.0f, 1.0f, 0.0f)); //先不考虑旋转
     lightingShader.setUniformValue("model", model);
+    //因为要获取灯的位置，所以提前算灯的model矩阵
+    model = QMatrix4x4();
+    float tx = std::sin(rotate*0.05) * 2.0f;
+    float tz = std::cos(rotate*0.05) * 2.0f;
+    model.translate(QVector3D(tx, 1.0f, tz));
+    //model.rotate(30, QVector3D(1.0f, 1.0f, 0.0f));
+    model.scale(0.3f);
+    QVector3D light_pos = model.map(QVector3D(0.0f, 0.0f, 0.0f));
+    QMatrix4x4 vv = view.inverted(); //逆矩阵求观察点位置
+    QVector3D view_pos = vv.map(QVector3D(0.0f, 0.0f, 0.0f));
+    lightingShader.setUniformValue("lightPos", light_pos);
+    lightingShader.setUniformValue("viewPos", view_pos);
     lightingVao.bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
     lightingVao.release();
@@ -133,11 +155,10 @@ void GLColors::paintGL()
     lampShader.bind();
     lampShader.setUniformValue("view", view);
     lampShader.setUniformValue("projection", projection);
-    model = QMatrix4x4();
-    model.translate(QVector3D(1.0f, 1.0f, 0.0f));
-    model.rotate(30, QVector3D(1.0f, 1.0f, 0.0f));
-    //model.translate(QVector3D(1.2f, 1.0f, 2.0f));
-    model.scale(0.3f);
+    //model = QMatrix4x4();
+    //model.translate(QVector3D(1.0f, 1.0f, 0.0f));
+    //model.rotate(30, QVector3D(1.0f, 1.0f, 0.0f));
+    //model.scale(0.3f);
     lampShader.setUniformValue("model", model);
     lampVao.bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -145,23 +166,23 @@ void GLColors::paintGL()
     lampShader.release();
 }
 
-void GLColors::resizeGL(int width, int height)
+void GLBasicLighting::resizeGL(int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
-void GLColors::mousePressEvent(QMouseEvent *event)
+void GLBasicLighting::mousePressEvent(QMouseEvent *event)
 {
     event->accept();
     mousePos = event->pos();
 }
 
-void GLColors::mouseReleaseEvent(QMouseEvent *event)
+void GLBasicLighting::mouseReleaseEvent(QMouseEvent *event)
 {
     event->accept();
 }
 
-void GLColors::mouseMoveEvent(QMouseEvent *event)
+void GLBasicLighting::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
     //参照示例cube
@@ -175,7 +196,7 @@ void GLColors::mouseMoveEvent(QMouseEvent *event)
     update();
 }
 
-void GLColors::wheelEvent(QWheelEvent *event)
+void GLBasicLighting::wheelEvent(QWheelEvent *event)
 {
     event->accept();
     //fovy越小，模型看起来越大
@@ -193,28 +214,59 @@ void GLColors::wheelEvent(QWheelEvent *event)
     update();
 }
 
-void GLColors::initShader()
+void GLBasicLighting::initShader()
 {
     //lingting shader
     //in输入，out输出,uniform从cpu向gpu发送
     const char *lighting_vertex=R"(#version 330 core
-layout (location = 0) in vec3 aPos;
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+
+out vec3 Normal;
+out vec3 FragPos;
+
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
 void main()
 {
-gl_Position = projection * view * model * vec4(aPos, 1.0f);
+    gl_Position = projection * view *  model * vec4(position, 1.0f);
+    FragPos = vec3(model * vec4(position, 1.0f));
+    Normal = mat3(transpose(inverse(model))) * normal;
 })";
     const char *lighting_fragment=R"(#version 330 core
+in vec3 Normal;
+in vec3 FragPos;
+
 uniform vec3 objectColor;
 uniform vec3 lightColor;
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+
 out vec4 FragColor;
 
 void main()
 {
-FragColor = vec4(lightColor * objectColor, 1.0);
+// ambient
+float ambientStrength = 0.1;
+vec3 ambient = ambientStrength * lightColor;
+
+// diffuse
+vec3 norm = normalize(Normal);
+vec3 lightDir = normalize(lightPos - FragPos);
+float diff = max(dot(norm, lightDir), 0.0);
+vec3 diffuse = diff * lightColor;
+
+// specular
+float specularStrength = 0.5;
+vec3 viewDir = normalize(viewPos - FragPos);
+vec3 reflectDir = reflect(-lightDir, norm);
+float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+vec3 specular = specularStrength * spec * lightColor;
+
+vec3 result = (ambient + diffuse + specular) * objectColor;
+FragColor = vec4(result, 1.0f);
 })";
 
     //将source编译为指定类型的着色器，并添加到此着色器程序
@@ -261,3 +313,5 @@ FragColor = vec4(1.0);
         qDebug()<<"link shaderprogram error"<<lampShader.log();
     }
 }
+
+
