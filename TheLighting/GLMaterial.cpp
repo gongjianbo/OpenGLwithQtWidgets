@@ -1,13 +1,13 @@
-#include "GLBasicLighting.h"
+#include "GLMaterial.h"
 #include <cmath>
 #include <QtMath>
 #include <QDebug>
 
-GLBasicLighting::GLBasicLighting(QWidget *parent)
+GLMaterial::GLMaterial(QWidget *parent)
     : QOpenGLWidget(parent)
 {
     connect(&timer,&QTimer::timeout,this,[this](){
-        rotate+=2;
+        rotate+=1;
         if(isVisible()){
             update();
         }
@@ -15,7 +15,7 @@ GLBasicLighting::GLBasicLighting(QWidget *parent)
     timer.setInterval(50);
 }
 
-GLBasicLighting::~GLBasicLighting()
+GLMaterial::~GLMaterial()
 {
     //initializeGL在显示时才调用，释放未初始化的会异常
     if(!isValid())
@@ -30,7 +30,7 @@ GLBasicLighting::~GLBasicLighting()
     doneCurrent();
 }
 
-void GLBasicLighting::initializeGL()
+void GLMaterial::initializeGL()
 {
     //为当前上下文初始化OpenGL函数解析
     initializeOpenGLFunctions();
@@ -110,7 +110,7 @@ void GLBasicLighting::initializeGL()
     timer.start();
 }
 
-void GLBasicLighting::paintGL()
+void GLMaterial::paintGL()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     //清除深度缓冲
@@ -121,31 +121,44 @@ void GLBasicLighting::paintGL()
 
     //draw lighting
     lightingShader.bind();
-    lightingShader.setUniformValue("objectColor", QVector3D(1.0f,0.5f,0.31f));
-    lightingShader.setUniformValue("lightColor", QVector3D(1.0f,1.0f,1.0f));
     QMatrix4x4 view; //观察矩阵
-    float radius = 10.0f;
-    view.translate(0.0f, 0.0f, -radius);
-    view.rotate(rotationQuat);
+    view.translate(0.0f, 0.0f, -5.0f);
+    view.rotate(45, QVector3D(1.0f, 0.8f, 0.0f));
     lightingShader.setUniformValue("view", view);
     QMatrix4x4 projection; //透视投影
-    projection.perspective(projectionFovy, 1.0f * width() / height(), 0.1f, 100.0f);
+    projection.perspective(45.0f, 1.0f * width() / height(), 0.1f, 100.0f);
     lightingShader.setUniformValue("projection", projection);
     QMatrix4x4 model;//模型矩阵
-    //model.rotate(30, QVector3D(1.0f, 1.0f, 0.0f)); //先不考虑旋转
     lightingShader.setUniformValue("model", model);
     //因为要获取灯的位置，所以提前算灯的model矩阵
     model = QMatrix4x4();
-    float tx = std::sin(rotate*0.05) * 2.0f;
-    float tz = std::cos(rotate*0.05) * 2.0f;
-    model.translate(QVector3D(tx, 1.0f, tz));
-    //model.rotate(30, QVector3D(1.0f, 1.0f, 0.0f));
+    model.translate(QVector3D(1.0f, 1.0f, -1.0f));
     model.scale(0.3f);
     QVector3D light_pos = model.map(QVector3D(0.0f, 0.0f, 0.0f));
     QMatrix4x4 vv = view.inverted(); //逆矩阵求观察点位置
     QVector3D view_pos = vv.map(QVector3D(0.0f, 0.0f, 0.0f));
-    lightingShader.setUniformValue("lightPos", light_pos);
+    lightingShader.setUniformValue("light.position", light_pos);
     lightingShader.setUniformValue("viewPos", view_pos);
+    //光照-light properties
+    QColor color = QColor::fromHsv((rotate*2)%360,255,255).toRgb(); //随时间变色
+    QVector3D light_color = QVector3D(color.red()/256.0f, color.green()/256.0f, color.blue()/256.0f);
+    QVector3D diffuse_color = light_color * 0.5f; // decrease the influence
+    QVector3D ambient_color = diffuse_color * 0.2f; // low influence
+    lightingShader.setUniformValue("light.ambient", ambient_color);
+    lightingShader.setUniformValue("light.diffuse", diffuse_color);
+    lightingShader.setUniformValue("light.specular", QVector3D(1.0f, 1.0f, 1.0f));
+
+    //材质-material properties
+    //ambient在环境光照下物体反射颜色
+    lightingShader.setUniformValue("material.ambient", QVector3D(1.0f, 0.5f, 0.31f));
+    //diffuse在漫反射光照下物体颜色
+    lightingShader.setUniformValue("material.diffuse", QVector3D(1.0f, 0.5f, 0.31f));
+    //specular镜面光照对物体的颜色影响(甚至可能反射一个物体特定的镜面高光颜色)
+    //specular lighting doesn't have full effect on this object's material
+    lightingShader.setUniformValue("material.specular", QVector3D(0.5f, 0.5f, 0.5f));
+    //shininess影响镜面高光的散射/半径
+    lightingShader.setUniformValue("material.shininess", 32.0f);
+
     lightingVao.bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
     lightingVao.release();
@@ -155,10 +168,6 @@ void GLBasicLighting::paintGL()
     lampShader.bind();
     lampShader.setUniformValue("view", view);
     lampShader.setUniformValue("projection", projection);
-    //model = QMatrix4x4();
-    //model.translate(QVector3D(1.0f, 1.0f, 0.0f));
-    //model.rotate(30, QVector3D(1.0f, 1.0f, 0.0f));
-    //model.scale(0.3f);
     lampShader.setUniformValue("model", model);
     lampVao.bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -166,64 +175,21 @@ void GLBasicLighting::paintGL()
     lampShader.release();
 }
 
-void GLBasicLighting::resizeGL(int width, int height)
+void GLMaterial::resizeGL(int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
-void GLBasicLighting::mousePressEvent(QMouseEvent *event)
-{
-    event->accept();
-    mousePos = event->pos();
-}
-
-void GLBasicLighting::mouseReleaseEvent(QMouseEvent *event)
-{
-    event->accept();
-}
-
-void GLBasicLighting::mouseMoveEvent(QMouseEvent *event)
-{
-    event->accept();
-    //参照示例cube
-    QVector2D diff = QVector2D(event->pos()) - QVector2D(mousePos);
-    mousePos = event->pos();
-    QVector3D n = QVector3D(diff.y(), diff.x(), 0.0).normalized();
-    rotationAxis = (rotationAxis + n).normalized();
-    //不能对换乘的顺序
-    rotationQuat = QQuaternion::fromAxisAndAngle(rotationAxis, 2.0f) * rotationQuat;
-
-    update();
-}
-
-void GLBasicLighting::wheelEvent(QWheelEvent *event)
-{
-    event->accept();
-    //fovy越小，模型看起来越大
-    if(event->delta() < 0){
-        //鼠标向下滑动为-，这里作为zoom out
-        projectionFovy += 0.5f;
-        if(projectionFovy > 90)
-            projectionFovy = 90;
-    }else{
-        //鼠标向上滑动为+，这里作为zoom in
-        projectionFovy -= 0.5f;
-        if(projectionFovy < 1)
-            projectionFovy = 1;
-    }
-    update();
-}
-
-void GLBasicLighting::initShader()
+void GLMaterial::initShader()
 {
     //lingting shader
     //in输入，out输出,uniform从cpu向gpu发送
     const char *lighting_vertex=R"(#version 330 core
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 normal;
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
 
-out vec3 Normal;
 out vec3 FragPos;
+out vec3 Normal;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -231,42 +197,55 @@ uniform mat4 projection;
 
 void main()
 {
-    gl_Position = projection * view *  model * vec4(position, 1.0f);
-    FragPos = vec3(model * vec4(position, 1.0f));
-    Normal = mat3(transpose(inverse(model))) * normal;
+    FragPos = vec3(model * vec4(aPos, 1.0));
+    Normal = mat3(transpose(inverse(model))) * aNormal;
+
+    gl_Position = projection * view * vec4(FragPos, 1.0);
 })";
     const char *lighting_fragment=R"(#version 330 core
-in vec3 Normal;
-in vec3 FragPos;
-
-uniform vec3 objectColor;
-uniform vec3 lightColor;
-uniform vec3 lightPos;
-uniform vec3 viewPos;
-
 out vec4 FragColor;
+
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+
+struct Light {
+    vec3 position;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
+in vec3 FragPos;
+in vec3 Normal;
+
+uniform vec3 viewPos;
+uniform Material material;
+uniform Light light;
 
 void main()
 {
-// ambient
-float ambientStrength = 0.1;
-vec3 ambient = ambientStrength * lightColor;
+    // ambient
+    vec3 ambient = light.ambient * material.ambient;
 
-// diffuse
-vec3 norm = normalize(Normal);
-vec3 lightDir = normalize(lightPos - FragPos);
-float diff = max(dot(norm, lightDir), 0.0);
-vec3 diffuse = diff * lightColor;
+    // diffuse
+    vec3 norm = normalize(Normal);
+    vec3 lightDir = normalize(light.position - FragPos);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = light.diffuse * (diff * material.diffuse);
 
-// specular
-float specularStrength = 0.5;
-vec3 viewDir = normalize(viewPos - FragPos);
-vec3 reflectDir = reflect(-lightDir, norm);
-float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-vec3 specular = specularStrength * spec * lightColor;
+    // specular
+    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    vec3 specular = light.specular * (spec * material.specular);
 
-vec3 result = (ambient + diffuse + specular) * objectColor;
-FragColor = vec4(result, 1.0f);
+    vec3 result = ambient + diffuse + specular;
+    FragColor = vec4(result, 1.0);
 })";
 
     //将source编译为指定类型的着色器，并添加到此着色器程序
@@ -313,5 +292,3 @@ FragColor = vec4(1.0);
         qDebug()<<"link shaderprogram error"<<lampShader.log();
     }
 }
-
-

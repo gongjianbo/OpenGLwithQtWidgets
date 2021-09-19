@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabColors">
       <attribute name="title">
@@ -39,6 +39,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabMaterial">
+      <attribute name="title">
+       <string>Material</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="GLMaterial" name="material"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -53,6 +63,11 @@
    <class>GLBasicLighting</class>
    <extends>QOpenGLWidget</extends>
    <header>GLBasicLighting.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLMaterial</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLMaterial.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
