@@ -1,9 +1,9 @@
-#include "GLMaterial.h"
+#include "GLLightingMap.h"
 #include <cmath>
 #include <QtMath>
 #include <QDebug>
 
-GLMaterial::GLMaterial(QWidget *parent)
+GLLightingMap::GLLightingMap(QWidget *parent)
     : QOpenGLWidget(parent)
 {
     connect(&timer,&QTimer::timeout,this,[this](){
@@ -15,7 +15,7 @@ GLMaterial::GLMaterial(QWidget *parent)
     timer.setInterval(50);
 }
 
-GLMaterial::~GLMaterial()
+GLLightingMap::~GLLightingMap()
 {
     //initializeGL在显示时才调用，释放未初始化的会异常
     if(!isValid())
@@ -27,58 +27,61 @@ GLMaterial::~GLMaterial()
     vbo.destroy();
     lightingVao.destroy();
     lampVao.destroy();
+    delete diffuseMap;
+    delete specularMap;
     doneCurrent();
 }
 
-void GLMaterial::initializeGL()
+void GLLightingMap::initializeGL()
 {
     //为当前上下文初始化OpenGL函数解析
     initializeOpenGLFunctions();
     initShader();
 
-    //方块的顶点和法向量
+    //方块的顶点、法向量、纹理坐标
     float vertices[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        // positions          // normals           // texture coords
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
     };
 
     vbo=QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
@@ -90,10 +93,12 @@ void GLMaterial::initializeGL()
     vbo.bind();
     vbo.allocate(vertices,sizeof(vertices));
     //setAttributeBuffer(int location, GLenum type, int offset, int tupleSize, int stride = 0)
-    lightingShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 6);
+    lightingShader.setAttributeBuffer(0, GL_FLOAT, sizeof(GLfloat) * 0, 3, sizeof(GLfloat) * 8);
     lightingShader.enableAttributeArray(0);
-    lightingShader.setAttributeBuffer(1, GL_FLOAT, sizeof(GLfloat) * 3, 3, sizeof(GLfloat) * 6);
+    lightingShader.setAttributeBuffer(1, GL_FLOAT, sizeof(GLfloat) * 3, 3, sizeof(GLfloat) * 8);
     lightingShader.enableAttributeArray(1);
+    lightingShader.setAttributeBuffer(2, GL_FLOAT, sizeof(GLfloat) * 6, 2, sizeof(GLfloat) * 8);
+    lightingShader.enableAttributeArray(2);
     vbo.release();
     lightingVao.release();
 
@@ -102,15 +107,24 @@ void GLMaterial::initializeGL()
     lampVao.bind();
     vbo.bind();
     //setAttributeBuffer(int location, GLenum type, int offset, int tupleSize, int stride = 0)
-    lampShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 6);
+    lampShader.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 8);
     lampShader.enableAttributeArray(0);
     vbo.release();
     lampVao.release();
 
+    //纹理
+    diffuseMap = initTexture(":/container2.png");
+    specularMap = initTexture(":/container2_specular.png");
+    //shader configuration
+    lightingShader.bind();
+    lightingShader.setUniformValue("material.diffuse", 0);
+    lightingShader.setUniformValue("material.specular", 1);
+    lightingShader.release();
+
     timer.start();
 }
 
-void GLMaterial::paintGL()
+void GLLightingMap::paintGL()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     //清除深度缓冲
@@ -140,8 +154,7 @@ void GLMaterial::paintGL()
     lightingShader.setUniformValue("light.position", light_pos);
     lightingShader.setUniformValue("viewPos", view_pos);
     //光照-light properties
-    QColor color = QColor::fromHsv((rotate*2)%360,255,255).toRgb(); //光源随时间变色
-    QVector3D light_color = QVector3D(color.red()/256.0f, color.green()/256.0f, color.blue()/256.0f);
+    QVector3D light_color = QVector3D(1.0f, 1.0f, 1.0f);
     QVector3D diffuse_color = light_color * 0.5f; // decrease the influence
     QVector3D ambient_color = diffuse_color * 0.2f; // low influence
     lightingShader.setUniformValue("light.ambient", ambient_color);
@@ -149,17 +162,16 @@ void GLMaterial::paintGL()
     lightingShader.setUniformValue("light.specular", QVector3D(1.0f, 1.0f, 1.0f));
 
     //材质-material properties
-    //ambient在环境光照下物体反射颜色
-    lightingShader.setUniformValue("material.ambient", QVector3D(1.0f, 0.5f, 0.31f));
-    //diffuse在漫反射光照下物体颜色
-    lightingShader.setUniformValue("material.diffuse", QVector3D(1.0f, 0.5f, 0.31f));
-    //specular镜面光照对物体的颜色影响(甚至可能反射一个物体特定的镜面高光颜色)
-    //specular lighting doesn't have full effect on this object's material
-    lightingShader.setUniformValue("material.specular", QVector3D(0.5f, 0.5f, 0.5f));
     //shininess影响镜面高光的散射/半径
-    lightingShader.setUniformValue("material.shininess", 32.0f);
-
+    lightingShader.setUniformValue("material.shininess", 64.0f);
     lightingVao.bind();
+    //绑定2d纹理
+    //bind diffuse map
+    glActiveTexture(GL_TEXTURE0);
+    diffuseMap->bind();
+    //bind specular map
+    glActiveTexture(GL_TEXTURE1);
+    specularMap->bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
     lightingVao.release();
     lightingShader.release();
@@ -169,28 +181,29 @@ void GLMaterial::paintGL()
     lampShader.setUniformValue("view", view);
     lampShader.setUniformValue("projection", projection);
     lampShader.setUniformValue("model", model);
-    lampShader.setUniformValue("lightColor", light_color);
     lampVao.bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
     lampVao.release();
     lampShader.release();
 }
 
-void GLMaterial::resizeGL(int width, int height)
+void GLLightingMap::resizeGL(int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
-void GLMaterial::initShader()
+void GLLightingMap::initShader()
 {
     //lingting shader
     //in输入，out输出,uniform从cpu向gpu发送
     const char *lighting_vertex=R"(#version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
 
 out vec3 FragPos;
 out vec3 Normal;
+out vec2 TexCoords;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -200,6 +213,7 @@ void main()
 {
     FragPos = vec3(model * vec4(aPos, 1.0));
     Normal = mat3(transpose(inverse(model))) * aNormal;
+    TexCoords = aTexCoords;
 
     gl_Position = projection * view * vec4(FragPos, 1.0);
 })";
@@ -207,9 +221,8 @@ void main()
 out vec4 FragColor;
 
 struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    sampler2D diffuse;
+    sampler2D specular;
     float shininess;
 };
 
@@ -223,6 +236,7 @@ struct Light {
 
 in vec3 FragPos;
 in vec3 Normal;
+in vec2 TexCoords;
 
 uniform vec3 viewPos;
 uniform Material material;
@@ -231,19 +245,19 @@ uniform Light light;
 void main()
 {
     // ambient
-    vec3 ambient = light.ambient * material.ambient;
+    vec3 ambient = light.ambient * texture(material.diffuse, TexCoords).rgb;
 
     // diffuse
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(light.position - FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = light.diffuse * (diff * material.diffuse);
+    vec3 diffuse = light.diffuse * diff * texture(material.diffuse, TexCoords).rgb;
 
     // specular
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * (spec * material.specular);
+    vec3 specular = light.specular * spec * texture(material.specular, TexCoords).rgb;
 
     vec3 result = ambient + diffuse + specular;
     FragColor = vec4(result, 1.0);
@@ -276,11 +290,9 @@ gl_Position = projection * view * model * vec4(aPos, 1.0f);
 })";
     const char *lamp_fragment=R"(#version 330 core
 out vec4 FragColor;
-uniform vec3 lightColor;
-
 void main()
 {
-FragColor = vec4(lightColor, 1.0);
+FragColor = vec4(1.0);
 })"; // set alle 4 vector values to 1.0
 
     if(!lampShader.addCacheableShaderFromSourceCode(
@@ -294,4 +306,21 @@ FragColor = vec4(lightColor, 1.0);
     if(!lampShader.link()){
         qDebug()<<"link shaderprogram error"<<lampShader.log();
     }
+}
+
+QOpenGLTexture *GLLightingMap::initTexture(const QString &imgpath)
+{
+    QOpenGLTexture *texture = new QOpenGLTexture(QImage(imgpath), QOpenGLTexture::GenerateMipMaps);
+    if(!texture->isCreated()){
+        qDebug() << "Failed to create texture";
+    }
+    //set the texture wrapping parameters
+    //等于glTexParameteri(GLtexture_2D, GLtexture_WRAP_S, GL_REPEAT);
+    texture->setWrapMode(QOpenGLTexture::DirectionS, QOpenGLTexture::Repeat);
+    texture->setWrapMode(QOpenGLTexture::DirectionT, QOpenGLTexture::Repeat);//
+    //set texture filtering parameters
+    //等价于glTexParameteri(GLtexture_2D, GLtexture_MIN_FILTER, GL_LINEAR);
+    texture->setMinificationFilter(QOpenGLTexture::Linear);
+    texture->setMagnificationFilter(QOpenGLTexture::Linear);
+    return texture;
 }

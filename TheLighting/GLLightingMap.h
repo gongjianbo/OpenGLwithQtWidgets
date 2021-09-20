@@ -5,17 +5,22 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
+#include <QVector3D>
+#include <QMatrix4x4>
+#include <QQuaternion>
+#include <QTimer>
 
-//OpenGL Qt封装的类进行纹理渲染
+//光照贴图
 //QOpenGLWidget窗口上下文
 //QOpenGLFunctions访问OpenGL接口，可以不继承作为成员变量使用
-class GLTextureQt
+class GLLightingMap
         : public QOpenGLWidget
         , protected QOpenGLFunctions_3_3_Core
 {
+    Q_OBJECT
 public:
-    explicit GLTextureQt(QWidget *parent = nullptr);
-    ~GLTextureQt();
+    explicit GLLightingMap(QWidget *parent = nullptr);
+    ~GLLightingMap();
 
 protected:
     //【】继承QOpenGLWidget后重写这三个虚函数
@@ -27,16 +32,21 @@ protected:
     void resizeGL(int width, int height) override;
 
 private:
+    void initShader();
+    QOpenGLTexture *initTexture(const QString &imgpath);
+
+private:
     //着色器程序
-    QOpenGLShaderProgram shaderProgram;
+    QOpenGLShaderProgram lightingShader,lampShader;
     //顶点数组对象
-    QOpenGLVertexArrayObject vao;
+    QOpenGLVertexArrayObject lightingVao,lampVao;
     //顶点缓冲
     QOpenGLBuffer vbo;
-    //索引缓冲
-    QOpenGLBuffer ebo;
-    //纹理（因为不能赋值，所以只能声明为指针）
-    QOpenGLTexture *texture{ nullptr };
+    //纹理
+    QOpenGLTexture *diffuseMap{ nullptr };
+    QOpenGLTexture *specularMap{ nullptr };
+    //
+    QTimer timer;
+    int rotate{ 0 };
 };
-
 
