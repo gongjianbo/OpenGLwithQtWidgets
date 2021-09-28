@@ -124,6 +124,20 @@ void GLDirectionalLight::initializeGL()
     timer.start();
 }
 
+//绘制多个盒子
+static QVector3D cubePositions[] = {
+    QVector3D( 0.0f,  0.0f,  0.0f),
+    QVector3D( 0.0f, -4.0f,  0.0f),
+    QVector3D( 0.0f,  4.0f,  0.0f),
+    QVector3D( 1.0f, -5.0f, 1.0f),
+    QVector3D(-1.5f, -2.2f, -2.5f),
+    QVector3D(-3.8f, -2.0f, -7.3f),
+    QVector3D( 2.4f, -0.4f, -3.5f),
+    QVector3D(-1.7f, -3.0f, -6.5f),
+    QVector3D( 5.3f, -2.0f, -2.5f),
+    QVector3D(-1.3f,  1.0f, -1.5f)
+};
+
 void GLDirectionalLight::paintGL()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -136,18 +150,18 @@ void GLDirectionalLight::paintGL()
     //draw lighting
     lightingShader.bind();
     QMatrix4x4 view; //观察矩阵
-    view.translate(0.0f, 0.0f, -5.0f);
+    view.translate(0.0f, 0.0f, -10.0f);
     view.rotate(45, QVector3D(1.0f, 0.8f, 0.0f));
     lightingShader.setUniformValue("view", view);
     QMatrix4x4 projection; //透视投影
     projection.perspective(45.0f, 1.0f * width() / height(), 0.1f, 100.0f);
     lightingShader.setUniformValue("projection", projection);
     QMatrix4x4 model;//模型矩阵
-    lightingShader.setUniformValue("model", model);
+    //lightingShader.setUniformValue("model", model);
     //因为要获取灯的位置，所以提前算灯的model矩阵
     model = QMatrix4x4();
-    model.translate(QVector3D(1.0f, 1.0f, -1.0f));
-    model.scale(0.3f);
+    model.translate(QVector3D(0.0f, 2.0f, 0.0f));
+    model.scale(0.2f);
     //QVector3D light_pos = model.map(QVector3D(0.0f, 0.0f, 0.0f));
     //y上方向下照射的光
     QVector3D direction_pos = QVector3D(0.0f, -10.0f, 0.0f);
@@ -174,7 +188,20 @@ void GLDirectionalLight::paintGL()
     //bind specular map
     glActiveTexture(GL_TEXTURE1);
     specularMap->bind();
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    //glDrawArrays(GL_TRIANGLES, 0, 36);
+    //多个盒子便于对比
+    for (unsigned int i = 0; i < 10; i++) {
+        //模型矩阵
+        QMatrix4x4 box_model;
+        //平移
+        box_model.translate(cubePositions[i]);
+        float angle = i * 60;
+        //旋转
+        box_model.rotate(angle, QVector3D(1.0f, 0.3f, 0.5f));
+        //传入着色器并绘制
+        lightingShader.setUniformValue("model", box_model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
     lightingVao.release();
     lightingShader.release();
 
