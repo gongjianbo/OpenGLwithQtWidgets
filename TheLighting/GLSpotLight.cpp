@@ -121,7 +121,7 @@ void GLSpotLight::initializeGL()
     lightingShader.setUniformValue("material.specular", 1);
     lightingShader.release();
 
-    timer.start();
+    //timer.start();
 }
 
 //绘制多个盒子
