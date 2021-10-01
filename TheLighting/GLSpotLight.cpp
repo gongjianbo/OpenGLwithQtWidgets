@@ -1,9 +1,9 @@
-#include "GLPointLight.h"
+#include "GLSpotLight.h"
 #include <cmath>
 #include <QtMath>
 #include <QDebug>
 
-GLPointLight::GLPointLight(QWidget *parent)
+GLSpotLight::GLSpotLight(QWidget *parent)
     : QOpenGLWidget(parent)
 {
     connect(&timer,&QTimer::timeout,this,[this](){
@@ -15,7 +15,7 @@ GLPointLight::GLPointLight(QWidget *parent)
     timer.setInterval(50);
 }
 
-GLPointLight::~GLPointLight()
+GLSpotLight::~GLSpotLight()
 {
     //initializeGL在显示时才调用，释放未初始化的会异常
     if(!isValid())
@@ -32,7 +32,7 @@ GLPointLight::~GLPointLight()
     doneCurrent();
 }
 
-void GLPointLight::initializeGL()
+void GLSpotLight::initializeGL()
 {
     //为当前上下文初始化OpenGL函数解析
     initializeOpenGLFunctions();
@@ -138,7 +138,7 @@ static QVector3D cubePositions[] = {
     QVector3D(-1.3f,  1.0f, -1.5f)
 };
 
-void GLPointLight::paintGL()
+void GLSpotLight::paintGL()
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     //清除深度缓冲
@@ -163,10 +163,12 @@ void GLPointLight::paintGL()
     model.translate(QVector3D(0.0f, 2.0f, 0.0f));
     model.scale(0.2f);
     QVector3D light_pos = model.map(QVector3D(0.0f, 0.0f, 0.0f));
-    //QVector3D direction_pos = QVector3D(0.0f, -10.0f, 0.0f);
+    QVector3D direction_pos = QVector3D(0.0f, -10.0f, 0.0f);
     QMatrix4x4 vv = view.inverted(); //逆矩阵求观察点位置
     QVector3D view_pos = vv.map(QVector3D(0.0f, 0.0f, 0.0f));
+    lightingShader.setUniformValue("light.direction", direction_pos);
     lightingShader.setUniformValue("light.position", light_pos);
+    lightingShader.setUniformValue("light.cutOff", (float)std::cos(qDegreesToRadians(12.5)));
     lightingShader.setUniformValue("light.constant", 1.0f); //常数项
     lightingShader.setUniformValue("light.linear", 0.09f); //一次项
     lightingShader.setUniformValue("light.quadratic", 0.032f); //二次项
@@ -181,7 +183,7 @@ void GLPointLight::paintGL()
 
     //材质-material properties
     //shininess影响镜面高光的散射/半径
-    lightingShader.setUniformValue("material.shininess", 64.0f);
+    lightingShader.setUniformValue("material.shininess", 32.0f);
     lightingVao.bind();
     //绑定2d纹理
     //bind diffuse map
@@ -218,12 +220,12 @@ void GLPointLight::paintGL()
     lampShader.release();
 }
 
-void GLPointLight::resizeGL(int width, int height)
+void GLSpotLight::resizeGL(int width, int height)
 {
     glViewport(0, 0, width, height);
 }
 
-void GLPointLight::initShader()
+void GLSpotLight::initShader()
 {
     //lingting shader
     //in输入，out输出,uniform从cpu向gpu发送
@@ -249,27 +251,31 @@ void main()
     gl_Position = projection * view * vec4(FragPos, 1.0);
 })";
     const char *lighting_fragment=R"(#version 330 core
-out vec4 FragColor;
-
 struct Material {
     sampler2D diffuse;
     sampler2D specular;
-    float shininess;
+    float     shininess;
 };
 
 struct Light {
     vec3 position;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 direction;
+    float cutOff;
+
     float constant;
     float linear;
     float quadratic;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
 };
 
 in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoords;
+
+out vec4 color;
 
 uniform vec3 viewPos;
 uniform Material material;
@@ -277,26 +283,39 @@ uniform Light light;
 
 void main()
 {
-    // ambient
-    vec3 ambient = light.ambient * texture(material.diffuse, TexCoords).rgb;
-
-    // diffuse
-    vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(light.position - FragPos);
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = light.diffuse * diff * texture(material.diffuse, TexCoords).rgb;
 
-    // specular
-    vec3 viewDir = normalize(viewPos - FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = light.specular * spec * texture(material.specular, TexCoords).rgb;
+    // Check if lighting is inside the spotlight cone
+    float theta = dot(lightDir, normalize(-light.direction));
 
-    float distance = length(light.position - FragPos);
-    float attenuation = 1.0f / (light.constant + light.linear*distance +light.quadratic*(distance*distance));
+    if(theta > light.cutOff) // Remember that we're working with angles as cosines instead of degrees so a '>' is used.
+    {
+        // Ambient
+        vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
 
-    vec3 result = (ambient + diffuse + specular)*attenuation;
-    FragColor = vec4(result, 1.0);
+        // Diffuse
+        vec3 norm = normalize(Normal);
+        float diff = max(dot(norm, lightDir), 0.0);
+        vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
+
+        // Specular
+        vec3 viewDir = normalize(viewPos - FragPos);
+        vec3 reflectDir = reflect(-lightDir, norm);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+        vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+
+        // Attenuation
+        float distance    = length(light.position - FragPos);
+        float attenuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+
+        // ambient  *= attenuation;  // Also remove attenuation from ambient, because if we move too far, the light in spotlight would then be darker than outside (since outside spotlight we have ambient lighting).
+        diffuse  *= attenuation;
+        specular *= attenuation;
+
+        color = vec4(ambient + diffuse + specular, 1.0f);
+    }
+    else    // else, use ambient light so scene isn't completely dark outside the spotlight.
+        color = vec4(light.ambient * vec3(texture(material.diffuse, TexCoords)), 1.0f);
 })";
 
     //将source编译为指定类型的着色器，并添加到此着色器程序
@@ -344,7 +363,7 @@ FragColor = vec4(1.0);
     }
 }
 
-QOpenGLTexture *GLPointLight::initTexture(const QString &imgpath)
+QOpenGLTexture *GLSpotLight::initTexture(const QString &imgpath)
 {
     QOpenGLTexture *texture = new QOpenGLTexture(QImage(imgpath), QOpenGLTexture::GenerateMipMaps);
     if(!texture->isCreated()){

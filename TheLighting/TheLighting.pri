@@ -8,6 +8,7 @@ HEADERS += \
     $$PWD/GLLightingMap.h \
     $$PWD/GLMaterial.h \
     $$PWD/GLPointLight.h \
+    $$PWD/GLSpotLight.h \
     $$PWD/TheLighting.h
 
 SOURCES += \
@@ -17,4 +18,5 @@ SOURCES += \
     $$PWD/GLLightingMap.cpp \
     $$PWD/GLMaterial.cpp \
     $$PWD/GLPointLight.cpp \
+    $$PWD/GLSpotLight.cpp \
     $$PWD/TheLighting.cpp
