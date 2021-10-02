@@ -141,9 +141,9 @@ static QVector3D cubePositions[] = {
 //多个光源
 static QVector3D pointLightPositions[] = {
     QVector3D( 0.0f,  2.0f,  0.0f),
-    QVector3D( 2.3f, -3.3f, -4.0f),
-    QVector3D(-4.0f,  2.0f, -12.0f),
-    QVector3D( 0.0f,  0.0f, -3.0f)
+    QVector3D( 2.3f, -3.0f, -1.0f),
+    QVector3D(-3.0f,  2.0f, 0.5f),
+    QVector3D( 2.0f,  3.0f, 2.0f)
 };
 
 void GLMultipleLights::paintGL()
@@ -170,8 +170,8 @@ void GLMultipleLights::paintGL()
     lightingShader.setUniformValue("dirLight.diffuse", 0.2f, 0.2f, 0.2f);
     lightingShader.setUniformValue("dirLight.specular", 0.5f, 0.5f, 0.5f);
     QVector3D ambient_color(0.05f, 0.05f, 0.05f);
-    QVector3D diffuse_color(0.3f, 0.3f, 0.3f);
-    QVector3D specular_color(1.0f, 1.0f, 1.0f);
+    QVector3D diffuse_color(0.0f, 0.0f, 0.4f);
+    QVector3D specular_color(0.0f, 0.0f, 1.0f);
     // Point light 1
     lightingShader.setUniformValue("pointLights[0].position", pointLightPositions[0]);
     lightingShader.setUniformValue("pointLights[0].ambient", ambient_color);
@@ -213,8 +213,8 @@ void GLMultipleLights::paintGL()
     lightingShader.setUniformValue("spotLight.direction", direction_pos);
     lightingShader.setUniformValue("spotLight.position", light_pos);
     lightingShader.setUniformValue("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-    lightingShader.setUniformValue("spotLight.diffuse", 1.0f, 0.0f, 0.0f);
-    lightingShader.setUniformValue("spotLight.specular", 1.0f, 0.0f, 0.0f);
+    lightingShader.setUniformValue("spotLight.diffuse", 0.3f, 1.0f, 0.3f);
+    lightingShader.setUniformValue("spotLight.specular", 0.3f, 1.0f, 0.3f);
     lightingShader.setUniformValue("spotLight.constant", 1.0f);
     lightingShader.setUniformValue("spotLight.linear", 0.09f);
     lightingShader.setUniformValue("spotLight.quadratic", 0.032f);

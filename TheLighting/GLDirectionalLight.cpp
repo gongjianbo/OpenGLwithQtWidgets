@@ -195,7 +195,7 @@ void GLDirectionalLight::paintGL()
         QMatrix4x4 box_model;
         //平移
         box_model.translate(cubePositions[i]);
-        float angle = i * 60;
+        float angle = 20.0f * i;
         //旋转
         box_model.rotate(angle, QVector3D(1.0f, 0.3f, 0.5f));
         //传入着色器并绘制
