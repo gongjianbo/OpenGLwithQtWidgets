@@ -23,7 +23,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>8</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabTriangle">
       <attribute name="title">

@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>707</width>
+    <width>776</width>
     <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Learn OpenGL</string>
+   <string>Learn OpenGL (By: GongJianBo 1992)</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="TheBasic" name="tabBasic">
        <attribute name="title">
@@ -30,6 +30,11 @@
         <string>Lighting</string>
        </attribute>
       </widget>
+      <widget class="TheAdvanced" name="tabAdvanced">
+       <attribute name="title">
+        <string>Advanced</string>
+       </attribute>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -39,8 +44,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>707</width>
-     <height>23</height>
+     <width>776</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -57,6 +62,12 @@
    <class>TheLighting</class>
    <extends>QWidget</extends>
    <header>TheLighting.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TheAdvanced</class>
+   <extends>QWidget</extends>
+   <header>TheAdvanced.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
