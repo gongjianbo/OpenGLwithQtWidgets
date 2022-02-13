@@ -6,6 +6,7 @@ HEADERS += \
     $$PWD/MyCoordinate.h \
     $$PWD/MyPoker.h \
     $$PWD/MyQuaternion.h \
+    $$PWD/MyTransform.h \
     $$PWD/TheTest.h
 
 SOURCES += \
@@ -13,4 +14,5 @@ SOURCES += \
     $$PWD/MyCoordinate.cpp \
     $$PWD/MyPoker.cpp \
     $$PWD/MyQuaternion.cpp \
+    $$PWD/MyTransform.cpp \
     $$PWD/TheTest.cpp

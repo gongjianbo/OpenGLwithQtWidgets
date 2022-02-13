@@ -19,6 +19,16 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <widget class="QWidget" name="tabTransform">
+      <attribute name="title">
+       <string>Transform</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="MyTransform" name="transform"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabCoord">
       <attribute name="title">
        <string>Coord</string>
@@ -83,6 +93,11 @@
    <class>MyPoker</class>
    <extends>QOpenGLWidget</extends>
    <header>MyPoker.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyTransform</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyTransform.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
