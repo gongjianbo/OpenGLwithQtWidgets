@@ -21,5 +21,7 @@ include($$PWD/TheLighting/TheLighting.pri)
 INCLUDEPATH += $$PWD/TheLighting
 include($$PWD/TheAdvanced/TheAdvanced.pri)
 INCLUDEPATH += $$PWD/TheAdvanced
+include($$PWD/TheTest/TheTest.pri)
+INCLUDEPATH += $$PWD/TheTest
 include($$PWD/TheImage/TheImage.pri)
 INCLUDEPATH += $$PWD/TheImage

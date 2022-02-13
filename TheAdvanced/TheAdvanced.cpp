@@ -6,6 +6,7 @@ TheAdvanced::TheAdvanced(QWidget *parent) :
     ui(new Ui::TheAdvanced)
 {
     ui->setupUi(this);
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 TheAdvanced::~TheAdvanced()

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TheTest</class>
+ <widget class="QWidget" name="TheTest">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>571</width>
+    <height>413</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tabCoord">
+      <attribute name="title">
+       <string>Coord</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="MyCoordinate" name="coord"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabCamera">
+      <attribute name="title">
+       <string>Camera</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="MyCamera" name="camera"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabPoker">
+      <attribute name="title">
+       <string>Poker</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="MyPoker" name="poker"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabQuaternion">
+      <attribute name="title">
+       <string>Quaternion</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="MyQuaternion" name="quatemion"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyCoordinate</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyCoordinate.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyCamera</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyCamera.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyQuaternion</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyQuaternion.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyPoker</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyPoker.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

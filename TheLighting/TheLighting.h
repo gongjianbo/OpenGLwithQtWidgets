@@ -1,6 +1,4 @@
-#ifndef THELIGHTING_H
-#define THELIGHTING_H
-
+#pragma once
 #include <QWidget>
 
 namespace Ui {
@@ -18,5 +16,3 @@ public:
 private:
     Ui::TheLighting *ui;
 };
-
-#endif // THELIGHTING_H

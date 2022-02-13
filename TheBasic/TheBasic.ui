@@ -83,16 +83,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabCoordTest">
-      <attribute name="title">
-       <string>CoordTest</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="MyCoordinate" name="coordTest"/>
-       </item>
-      </layout>
-     </widget>
      <widget class="QWidget" name="tabCamera">
       <attribute name="title">
        <string>Camera</string>
@@ -100,36 +90,6 @@
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="GLCamera" name="camera"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabCameraTest">
-      <attribute name="title">
-       <string>CameraTest</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <item>
-        <widget class="MyCamera" name="cameraTest"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabPoker">
-      <attribute name="title">
-       <string>Poker</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_8">
-       <item>
-        <widget class="MyPoker" name="poker"/>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabQuaternion">
-      <attribute name="title">
-       <string>Quaternion</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_7">
-       <item>
-        <widget class="MyQuaternion" name="quaternion"/>
        </item>
       </layout>
      </widget>
@@ -189,29 +149,9 @@
    <header>GLCoordinate.h</header>
   </customwidget>
   <customwidget>
-   <class>MyCoordinate</class>
-   <extends>QOpenGLWidget</extends>
-   <header>MyCoordinate.h</header>
-  </customwidget>
-  <customwidget>
    <class>GLCamera</class>
    <extends>QOpenGLWidget</extends>
    <header>GLCamera.h</header>
-  </customwidget>
-  <customwidget>
-   <class>MyCamera</class>
-   <extends>QOpenGLWidget</extends>
-   <header>MyCamera.h</header>
-  </customwidget>
-  <customwidget>
-   <class>MyQuaternion</class>
-   <extends>QOpenGLWidget</extends>
-   <header>MyQuaternion.h</header>
-  </customwidget>
-  <customwidget>
-   <class>MyPoker</class>
-   <extends>QOpenGLWidget</extends>
-   <header>MyPoker.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

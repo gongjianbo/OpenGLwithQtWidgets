@@ -6,6 +6,7 @@ TheBasic::TheBasic(QWidget *parent) :
     ui(new Ui::TheBasic)
 {
     ui->setupUi(this);
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 TheBasic::~TheBasic()

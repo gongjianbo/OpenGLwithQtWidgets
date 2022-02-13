@@ -6,6 +6,7 @@ TheLighting::TheLighting(QWidget *parent) :
     ui(new Ui::TheLighting)
 {
     ui->setupUi(this);
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 TheLighting::~TheLighting()
