@@ -60,7 +60,8 @@ uniform sampler2D texture2;
 out vec4 fragColor;
 void main()
 {
-fragColor = mix(texture(texture1, texCoord), texture(texture2, texCoord), 0.2);
+fragColor = mix(texture(texture1, texCoord),
+texture(texture2, texCoord), 0.2) * vec4(theColor, 1.0);
 })";
 
     //将source编译为指定类型的着色器，并添加到此着色器程序
