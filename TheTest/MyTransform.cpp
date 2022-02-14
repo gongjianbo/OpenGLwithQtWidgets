@@ -32,13 +32,13 @@ void MyTransform::initializeGL()
     //in输入，out输出,uniform从cpu向gpu发送
     const char *vertex_str = R"(#version 330 core
 layout (location = 0) in vec3 inPos;
-layout (location = 1) in vec3 inColor;
 uniform mat4 transform;
+uniform vec3 color;
 out vec3 theColor;
 void main()
 {
 gl_Position = transform * vec4(inPos, 1.0);
-theColor = inColor;
+theColor = color;
 })";
     const char *fragment_str = R"(#version 330 core
 in vec3 theColor;
@@ -64,11 +64,11 @@ fragColor = vec4(theColor, 1.0);
 
     //顶点数据
     GLfloat vertices[] = {
-        // positions          // colors
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   // top right
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 1.0f,  // top left
+        // positions
+        0.5f,  0.5f, 0.0f,   // top right
+        0.5f, -0.5f, 0.0f,   // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left
     };
     //索引
     GLuint indices[] = {
@@ -88,13 +88,10 @@ fragColor = vec4(theColor, 1.0);
     ebo.bind();
     ebo.allocate(indices, sizeof(indices));
 
-    //参数1对应layout
+    //参数对应layout
     // position attribute
-    shaderProgram.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 6);
+    shaderProgram.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 3);
     shaderProgram.enableAttributeArray(0);
-    // color attribute
-    shaderProgram.setAttributeBuffer(1, GL_FLOAT, sizeof(GLfloat) * 3, 3, sizeof(GLfloat) * 6);
-    shaderProgram.enableAttributeArray(1);
 }
 
 void MyTransform::paintGL()
@@ -102,18 +99,32 @@ void MyTransform::paintGL()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    shaderProgram.bind();
+    vao.bind();
+
     //变换矩阵
     QMatrix4x4 transform;
     //向右下角平移
     transform.translate(QVector3D(0.5f, -0.5f, 0.0f));
+    //设置
+    shaderProgram.setUniformValue("color", QVector3D(1.0, 0, 0));
+    shaderProgram.setUniformValue("transform", transform);
+    //根据索引绘制
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+
     //缩放
     transform.scale(0.5);
+    //设置
+    shaderProgram.setUniformValue("color", QVector3D(0, 1.0, 0));
+    shaderProgram.setUniformValue("transform", transform);
+    //根据索引绘制
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
+
     //绕z轴旋转
     transform.rotate(45, QVector3D(0.0f, 0.0f, 1.0f));
-
-    shaderProgram.bind();
+    //设置
+    shaderProgram.setUniformValue("color", QVector3D(0, 0, 1.0));
     shaderProgram.setUniformValue("transform", transform);
-    vao.bind();
     //根据索引绘制
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, NULL);
 }
