@@ -1,16 +1,17 @@
 #pragma once
 #include <QOpenGLWidget>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_4_5_Core>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
+#include <QMatrix4x4>
 
 //变换练习（平移-缩放-旋转）
 //QOpenGLFunctions访问OpenGL接口，可以不继承作为成员变量使用
 class MyTransform
         : public QOpenGLWidget
-        , protected QOpenGLFunctions_3_3_Core
+        , protected QOpenGLFunctions_4_5_Core
 {
     Q_OBJECT
 public:
@@ -35,4 +36,6 @@ private:
     QOpenGLBuffer vbo;
     //索引缓冲
     QOpenGLBuffer ebo;
+    //投影矩阵
+    QMatrix4x4 projection;
 };
