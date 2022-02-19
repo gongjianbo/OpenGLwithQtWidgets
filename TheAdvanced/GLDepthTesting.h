@@ -31,4 +31,6 @@ private:
     QOpenGLShaderProgram shaderProgram;
     QOpenGLVertexArrayObject vao;
     QOpenGLBuffer vbo;
+    //投影矩阵
+    QMatrix4x4 projection;
 };

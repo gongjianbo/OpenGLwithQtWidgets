@@ -29,17 +29,21 @@ void GLDepthTesting::initializeGL()
     //着色器代码
     //in输入，out输出,uniform从cpu向gpu发送
     const char *vertex_str=R"(#version 450
-layout (location = 0) in vec3 vertices;
+layout (location = 0) in vec3 vPos;
+layout (location = 1) in vec3 vColor;
 uniform mat4 view;
 uniform mat4 projection;
+out vec3 theColor;
 void main() {
-gl_Position = projection * view * vec4(vertices,1.0);
+gl_Position = projection * view * vec4(vPos, 1.0f);
+theColor = vColor;
 })";
     //z深度值越大，颜色越白
     const char *fragment_str=R"(#version 450
+in vec3 theColor;
 out vec4 fragColor;
 void main() {
-fragColor = vec4(vec3(gl_FragCoord.z),1.0);
+fragColor = vec4(theColor * (1.0f - gl_FragCoord.z), 1.0f);
 })";
 
     //顶点着色器
@@ -58,17 +62,16 @@ fragColor = vec4(vec3(gl_FragCoord.z),1.0);
         qDebug()<<"link shader failed!"<<shaderProgram.log();
     }
 
-    //三角形的三个顶点
+    //两个交叠的三角形顶点
     //这里的z值和投影的z范围对应
-    //第一个三角超出了范围，会被投影截取掉，使用GL_DEPTH_CLAMP截取z值到可见范围
-    float vertices[] = {
-        -0.7f, -0.5f, 10.0f, // left
-        0.3f, -0.5f, 10.0f, // right
-        -0.2f,  0.5f, 10.0f,  // top
+    GLfloat vertices[] = {
+        -0.55f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -0.55f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, -50.0f, 1.0f, 0.0f, 0.0f,
 
-        -0.3f, -0.5f, -90.0f, // left
-        0.7f, -0.5f, -90.0f, // right
-        0.2f,  0.5f, -90.0f  // top
+        0.55f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        0.55f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+        -1.0f, 0.0f, -50.0f, 0.0f, 0.0f, 1.0f
     };
 
     vao.create();
@@ -78,8 +81,10 @@ fragColor = vec4(vec3(gl_FragCoord.z),1.0);
     vbo.bind();
     vbo.allocate(vertices,sizeof(vertices));
     //setAttributeBuffer(int location, GLenum type, int offset, int tupleSize, int stride = 0)
-    shaderProgram.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 3);
+    shaderProgram.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 6);
     shaderProgram.enableAttributeArray(0);
+    shaderProgram.setAttributeBuffer(1, GL_FLOAT, sizeof(GLfloat) * 3, 3, sizeof(GLfloat) * 6);
+    shaderProgram.enableAttributeArray(1);
     vbo.release();
     vao.release();
 
@@ -93,8 +98,8 @@ fragColor = vec4(vec3(gl_FragCoord.z),1.0);
     //glDepthMask(GL_FALSE);
     //可以修改深度测试使用的比较规则，默认GL_LESS丢弃深度大于等于的
     //glDepthFunc(GL_LESS);
-    //截取深度值
-    glEnable(GL_DEPTH_CLAMP);
+    //使近平面外的可见
+    //glEnable(GL_DEPTH_CLAMP);
 }
 
 void GLDepthTesting::paintGL()
@@ -104,16 +109,13 @@ void GLDepthTesting::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     shaderProgram.bind();
-    QMatrix4x4 view; //观察矩阵，后退一点
+    //观察矩阵
+    QMatrix4x4 view;
     //OpenGL本身没有摄像机(Camera)的概念，但我们可以通过把场景中的所有物体往相反方向移动的方式来模拟出摄像机，
     //产生一种我们在移动的感觉，而不是场景在移动。
     view.translate(QVector3D(0.0f, 0.0f, -3.0f));
     shaderProgram.setUniformValue("view", view);
-    QMatrix4x4 projection; //正交投影，便于观察平面三角
-    //坐标到达观察空间之后，我们需要将其投影到裁剪坐标。
-    //裁剪坐标会被处理至-1.0到1.0的范围内，并判断哪些顶点将会出现在屏幕上
-    //float left, float right, float bottom, float top, float nearPlane, float farPlane
-    projection.ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 100.0f);
+    //投影矩阵
     shaderProgram.setUniformValue("projection", projection);
     {
         QOpenGLVertexArrayObject::Binder vao_bind(&vao); Q_UNUSED(vao_bind);
@@ -122,7 +124,10 @@ void GLDepthTesting::paintGL()
         //参数1为图元类型
         //参数2指定顶点数组的起始索引
         //参数3指定顶点个数
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        //（这里分别画两个三角）
+        glDrawArrays(GL_TRIANGLES, 0, 3); //red
+        glDrawArrays(GL_TRIANGLES, 3, 3); //blue
+        //glDrawArrays(GL_TRIANGLES, 0, 3); //red
     }
     //只有一个着色器，可以不用release
     shaderProgram.release();
@@ -130,5 +135,15 @@ void GLDepthTesting::paintGL()
 
 void GLDepthTesting::resizeGL(int width, int height)
 {
-    glViewport(0,0,width,height);
+    if (width < 1 || height < 1) {
+        return;
+    }
+    //宽高比例
+    qreal aspect = qreal(width) / qreal(height);
+    //单位矩阵
+    projection.setToIdentity();
+    //坐标到达观察空间之后，我们需要将其投影到裁剪坐标。
+    //裁剪坐标会被处理至-1.0到1.0的范围内，并判断哪些顶点将会出现在屏幕上
+    //float left, float right, float bottom, float top, float nearPlane, float farPlane
+    projection.ortho(-1.0f * aspect, 1.0f * aspect, -1.0f, 1.0f, 0.0f, 100.0f);
 }
