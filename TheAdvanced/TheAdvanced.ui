@@ -26,10 +26,15 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tabFaceCulling">
       <attribute name="title">
-       <string>Tab 2</string>
+       <string>FaceCulling</string>
       </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="GLFaceCulling" name="faceCulling"/>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
@@ -40,6 +45,11 @@
    <class>GLDepthTesting</class>
    <extends>QOpenGLWidget</extends>
    <header>GLDepthTesting.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLFaceCulling</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLFaceCulling.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

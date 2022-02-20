@@ -1,12 +1,12 @@
-#include "GLDepthTesting.h"
+#include "GLFaceCulling.h"
 
-GLDepthTesting::GLDepthTesting(QWidget *parent)
+GLFaceCulling::GLFaceCulling(QWidget *parent)
     : QOpenGLWidget(parent)
 {
 
 }
 
-GLDepthTesting::~GLDepthTesting()
+GLFaceCulling::~GLFaceCulling()
 {
     //initializeGL在显示时才调用，释放未初始化的会异常
     if(!isValid())
@@ -20,7 +20,7 @@ GLDepthTesting::~GLDepthTesting()
     doneCurrent();
 }
 
-void GLDepthTesting::initializeGL()
+void GLFaceCulling::initializeGL()
 {
     //QOpenGLFunctions
     //为当前上下文初始化opengl函数解析
@@ -41,7 +41,7 @@ theColor = vColor;
 in vec3 theColor;
 out vec4 fragColor;
 void main() {
-fragColor = vec4(theColor * (1.0f - gl_FragCoord.z), 1.0f);
+fragColor = vec4(theColor, 1.0f);
 })";
 
     //顶点着色器
@@ -60,16 +60,16 @@ fragColor = vec4(theColor * (1.0f - gl_FragCoord.z), 1.0f);
         qDebug()<<"link shader failed!"<<shaderProgram.log();
     }
 
-    //两个交叠的三角形顶点
-    //这里的z值和投影的z范围对应
+    //两个不同环绕顺序、不同颜色的三角形
     GLfloat vertices[] = {
-        -0.55f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        -0.55f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, -50.0f, 1.0f, 0.0f, 0.0f,
-
-        0.55f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        0.55f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -1.0f, 0.0f, -50.0f, 0.0f, 0.0f, 1.0f
+        //左侧顺时针-红色
+        -0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -1.0f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+        //右侧逆时针-蓝色
+        0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+        0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f
     };
 
     vao.create();
@@ -88,23 +88,17 @@ fragColor = vec4(theColor * (1.0f - gl_FragCoord.z), 1.0f);
 
     //清屏设置
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    //深度测试默认是关闭的，需要用GL_DEPTH_TEST选项启用深度测试
-    glEnable(GL_DEPTH_TEST);
-    //在某些情况下我们需要进行深度测试并相应地丢弃片段，但我们不希望更新深度缓冲区，
-    //基本上，可以使用一个只读的深度缓冲区；
-    //OpenGL允许我们通过将其深度掩码设置为GL_FALSE禁用深度缓冲区写入:
-    //glDepthMask(GL_FALSE);
-    //可以修改深度测试使用的比较规则，默认GL_LESS丢弃深度大于等于的
-    //glDepthFunc(GL_LESS);
-    //使近平面外的可见
-    //glEnable(GL_DEPTH_CLAMP);
 }
 
-void GLDepthTesting::paintGL()
+void GLFaceCulling::paintGL()
 {
-    //渲染之前使用GL_DEPTH_BUFFER_BIT清除深度缓冲区
-    //否则深度缓冲区将保留上一次进行深度测试时所写的深度值
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
+    //使能面剔除
+    glEnable(GL_CULL_FACE);
+    //GL_FRONT剔除正面，GL_BACK剔除背面(默认)，GL_FRONT_AND_BACK剔除正反面
+    //glCullFace(GL_FRONT);
+    //设置正面的环绕方式，GL_CCW逆时针(默认)，GL_CW顺时针
+    //glFrontFace(GL_CW);
 
     shaderProgram.bind();
     //观察矩阵
@@ -120,15 +114,12 @@ void GLDepthTesting::paintGL()
         //参数1为图元类型
         //参数2指定顶点数组的起始索引
         //参数3指定顶点个数
-        //（这里分别画两个三角）
-        glDrawArrays(GL_TRIANGLES, 0, 3); //red
-        glDrawArrays(GL_TRIANGLES, 3, 3); //blue
-        //glDrawArrays(GL_TRIANGLES, 0, 3); //red
+        glDrawArrays(GL_TRIANGLES, 0, 6);
     }
     shaderProgram.release();
 }
 
-void GLDepthTesting::resizeGL(int width, int height)
+void GLFaceCulling::resizeGL(int width, int height)
 {
     if (width < 1 || height < 1) {
         return;

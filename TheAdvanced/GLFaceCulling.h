@@ -5,17 +5,17 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 
-//深度测试
+//面剔除
 //QOpenGLWidget窗口上下文
 //QOpenGLFunctions访问OpenGL接口，可以不继承作为成员变量使用
-class GLDepthTesting
+class GLFaceCulling
         : public QOpenGLWidget
         , protected QOpenGLFunctions_4_5_Core
 {
     Q_OBJECT
 public:
-    explicit GLDepthTesting(QWidget *parent = nullptr);
-    ~GLDepthTesting();
+    explicit GLFaceCulling(QWidget *parent = nullptr);
+    ~GLFaceCulling();
 
 protected:
     //【】继承QOpenGLWidget后重写这三个虚函数
