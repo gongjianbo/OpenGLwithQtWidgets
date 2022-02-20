@@ -26,6 +26,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabBlending">
+      <attribute name="title">
+       <string>Blending</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="GLBlending" name="blending"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabFaceCulling">
       <attribute name="title">
        <string>FaceCulling</string>
@@ -50,6 +60,11 @@
    <class>GLFaceCulling</class>
    <extends>QOpenGLWidget</extends>
    <header>GLFaceCulling.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLBlending</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLBlending.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
