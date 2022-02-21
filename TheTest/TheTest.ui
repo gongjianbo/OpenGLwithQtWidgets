@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabTransform">
       <attribute name="title">
@@ -56,6 +56,16 @@
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <widget class="MyPoker" name="poker"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabTorus">
+      <attribute name="title">
+       <string>Torus</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="MyTorus" name="torus"/>
        </item>
       </layout>
      </widget>
@@ -98,6 +108,11 @@
    <class>MyTransform</class>
    <extends>QOpenGLWidget</extends>
    <header>MyTransform.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyTorus</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyTorus.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
