@@ -132,11 +132,12 @@ void GLTextureQt::paintGL()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    //深度测试发生于混合之前
     //当我们需要绘制透明图片时，就需要关闭GL_DEPTH_TEST并且打开混合glEnable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
-    //基于源像素Alpha通道值的半透明混合函数
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    //指定混合函数
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //激活纹理
     glActiveTexture(GL_TEXTURE0);

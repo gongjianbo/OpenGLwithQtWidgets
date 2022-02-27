@@ -102,7 +102,7 @@ void GLBlending::paintGL()
     //源颜色是片段着色器写入的值。目标颜色是帧缓冲区中图像的颜色。
     glEnable(GL_BLEND);
     //混合参数
-    //void glBlendFunc(GLenum sfactor​, GLenum dfactor​);
+    //void glBlendFunc(GLenum sfactor, GLenum dfactor);
     //sfactor​源混合因子，初始值GL_ONE
     //dfactor​目标混合因子，初始值GL_ZERO
     //GL_ZERO，表示使用0.0作为因子，实际上相当于不使用这种颜色参与混合运算。
