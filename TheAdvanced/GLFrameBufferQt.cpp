@@ -1,12 +1,12 @@
-#include "GLFrameBuffer.h"
+#include "GLFrameBufferQt.h"
 
-GLFrameBuffer::GLFrameBuffer(QWidget *parent)
+GLFrameBufferQt::GLFrameBufferQt(QWidget *parent)
     : QOpenGLWidget(parent)
 {
 
 }
 
-GLFrameBuffer::~GLFrameBuffer()
+GLFrameBufferQt::~GLFrameBufferQt()
 {
     //initializeGL在显示时才调用，释放未初始化的会异常
     if(!isValid())
@@ -18,11 +18,12 @@ GLFrameBuffer::~GLFrameBuffer()
     vbo.destroy();
     ebo.destroy();
     vao.destroy();
+    delete fbo;
     delete texture;
     doneCurrent();
 }
 
-void GLFrameBuffer::initializeGL()
+void GLFrameBufferQt::initializeGL()
 {
     //QOpenGLFunctions
     //为当前上下文初始化opengl函数解析
@@ -112,36 +113,17 @@ fragColor = texture(theTexture, texCoord);
     shaderProgram.setUniformValue("theTexture", 0);
     shaderProgram.release();
 
-    //为了简化操作，我这里将帧缓冲固定为400x400大小
-    int SCR_WIDTH = 400;
-    int SCR_HEIGHT = 400;
-    //unsigned int framebuffer;
-    glGenFramebuffers(1, &framebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    // create a color attachment texture
-    //unsigned int texturebuffer;
-    glGenTextures(1, &texturebuffer);
-    glBindTexture(GL_TEXTURE_2D, texturebuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texturebuffer, 0);
-    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
-    unsigned int rbo;
-    glGenRenderbuffers(1, &rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
-    // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-        qDebug() << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
-    }
+    //为了简化操作，暂时将帧缓冲固定为400x400大小
+    fbo = new QOpenGLFramebufferObject(400, 400, QOpenGLFramebufferObject::Depth, GL_TEXTURE_2D, GL_RGBA);
+    fbo->bind();
+    fbo->addColorAttachment(fbo->size(), GL_RGBA);
+    fbo->release();
 }
 
-void GLFrameBuffer::paintGL()
+void GLFrameBufferQt::paintGL()
 {
     //渲染自定义帧缓冲
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    fbo->bind();
     glViewport(0, 0, 400, 400);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -176,12 +158,13 @@ void GLFrameBuffer::paintGL()
     view2.translate(QVector3D(0.0f, 0.0f, -10.0f));
     shaderProgram.setUniformValue("mvp", projection * view2);
     vao.bind();
-    glBindTexture(GL_TEXTURE_2D, texturebuffer);	// use the color attachment texture as the texture of the quad plane
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, fbo->texture());
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     shaderProgram.release();
 }
 
-void GLFrameBuffer::resizeGL(int width, int height)
+void GLFrameBufferQt::resizeGL(int width, int height)
 {
     if (width < 1 || height < 1) {
         return;

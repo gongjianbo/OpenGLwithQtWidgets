@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabDepthTesting">
       <attribute name="title">
@@ -59,6 +59,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabFrameBufferQt">
+      <attribute name="title">
+       <string>FrameBuffer</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="GLFrameBufferQt" name="frameBufferQt"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -83,6 +93,11 @@
    <class>GLFrameBuffer</class>
    <extends>QOpenGLWidget</extends>
    <header>GLFrameBuffer.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLFrameBufferQt</class>
+   <extends>QOpenGLWidget</extends>
+   <header>GLFrameBufferQt.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

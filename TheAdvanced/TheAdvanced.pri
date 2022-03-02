@@ -6,6 +6,7 @@ HEADERS += \
     $$PWD/GLDepthTesting.h \
     $$PWD/GLFaceCulling.h \
     $$PWD/GLFrameBuffer.h \
+    $$PWD/GLFrameBufferQt.h \
     $$PWD/TheAdvanced.h
 
 SOURCES += \
@@ -13,4 +14,5 @@ SOURCES += \
     $$PWD/GLDepthTesting.cpp \
     $$PWD/GLFaceCulling.cpp \
     $$PWD/GLFrameBuffer.cpp \
+    $$PWD/GLFrameBufferQt.cpp \
     $$PWD/TheAdvanced.cpp
