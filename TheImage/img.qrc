@@ -5,5 +5,6 @@
         <file>liuyifei.png</file>
         <file>container2.png</file>
         <file>container2_specular.png</file>
+        <file>metal.png</file>
     </qresource>
 </RCC>

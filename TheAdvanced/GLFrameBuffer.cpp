@@ -19,6 +19,7 @@ GLFrameBuffer::~GLFrameBuffer()
     ebo.destroy();
     vao.destroy();
     delete texture;
+    glDeleteFramebuffers(1, &framebuffer);
     doneCurrent();
 }
 
@@ -64,10 +65,10 @@ fragColor = texture(theTexture, texCoord);
     //顶点数据
     float vertices[] = {
         // positions          // texture coords
-        0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
-        0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f  // top left
+        0.5f,   0.5f, 0.0f,   1.0f, 1.0f, // top right
+        0.5f,  -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // top left
     };
     //索引
     unsigned int indices[] = {
@@ -115,27 +116,35 @@ fragColor = texture(theTexture, texCoord);
     //为了简化操作，我这里将帧缓冲固定为400x400大小
     int SCR_WIDTH = 400;
     int SCR_HEIGHT = 400;
+    //创建帧缓冲对象
     //unsigned int framebuffer;
     glGenFramebuffers(1, &framebuffer);
+    //绑定为激活的帧缓冲
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-    // create a color attachment texture
+    //添加一个纹理附件
     //unsigned int texturebuffer;
     glGenTextures(1, &texturebuffer);
     glBindTexture(GL_TEXTURE_2D, texturebuffer);
+    //只设置了大小，分配了内存但是没填充数据（NULL），填充这个纹理将会在我们渲染到帧缓冲之后来进行
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //纹理附加到帧缓冲
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texturebuffer, 0);
-    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+    //添加一个渲染缓冲附件
     unsigned int rbo;
     glGenRenderbuffers(1, &rbo);
     glBindRenderbuffer(GL_RENDERBUFFER, rbo);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
-    // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+    //完成所有操作后，检测帧缓冲是否完整
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
         qDebug() << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
     }
+    //切换到OpenGL默认帧缓冲
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    //释放帧缓冲对象
+    //glDeleteFramebuffers(1, &framebuffer);
 }
 
 void GLFrameBuffer::paintGL()
@@ -164,7 +173,7 @@ void GLFrameBuffer::paintGL()
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     shaderProgram.release();
 
-    //切换到QOpenGLWidget默认的帧缓冲，这里不能用0来作为默认帧缓冲
+    //切换到QOpenGLWidget.context默认的帧缓冲，这里不能用0来作为默认帧缓冲
     glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebufferObject());
     glViewport(0, 0, width(), height());
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
