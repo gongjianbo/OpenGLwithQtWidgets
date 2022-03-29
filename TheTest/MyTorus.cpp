@@ -200,8 +200,8 @@ void MyTorus::paintGL()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     QPainter painter(this);
     painter.setPen(Qt::white);
-    painter.setFont(QFont("Microsoft YaHei",16));
-    painter.drawText(20, 50, "Click right mouse button popup menu");
+    painter.setFont(QFont("Microsoft YaHei", 14));
+    painter.drawText(20, 40, "Click right mouse button popup menu");
 }
 
 void MyTorus::resizeGL(int width, int height)

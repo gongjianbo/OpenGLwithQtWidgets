@@ -1,4 +1,5 @@
 #include "GLFrameBufferQt.h"
+#include <QPainter>
 
 GLFrameBufferQt::GLFrameBufferQt(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -451,6 +452,11 @@ void GLFrameBufferQt::paintScreen()
     screenShaderProgram.release();
     //恢复
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    QPainter painter(this);
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("Microsoft YaHei", 14));
+    painter.drawText(20, 40, "Click right mouse button popup menu");
 }
 
 void GLFrameBufferQt::paintFbo()
