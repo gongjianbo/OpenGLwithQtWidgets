@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>4</number>
+      <number>6</number>
      </property>
      <widget class="QWidget" name="tabTransform">
       <attribute name="title">
@@ -29,13 +29,13 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabCoord">
+     <widget class="QWidget" name="tabCoordinate">
       <attribute name="title">
-       <string>Coord</string>
+       <string>Coordinate</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="MyCoordinate" name="coord"/>
+        <widget class="MyCoordinate" name="coordinate"/>
        </item>
       </layout>
      </widget>
@@ -79,6 +79,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabRayPick">
+      <attribute name="title">
+       <string>RayPick</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="MyRayPick" name="rayPick"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -113,6 +123,11 @@
    <class>MyTorus</class>
    <extends>QOpenGLWidget</extends>
    <header>MyTorus.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyRayPick</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyRayPick.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
