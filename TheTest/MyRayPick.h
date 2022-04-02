@@ -13,6 +13,10 @@
 #include <QWheelEvent>
 
 //射线拾取练习
+//参考：
+//https://blog.csdn.net/z136411501/article/details/100754470
+//https://blog.csdn.net/z136411501/article/details/101040741
+//https://blog.csdn.net/wind_hzx/article/details/40016619
 //QOpenGLWidget窗口上下文
 //QOpenGLFunctions访问OpenGL接口，可以不继承作为成员变量使用
 class MyRayPick
@@ -45,6 +49,9 @@ private:
     //添加射线
     void appendRay(const QPointF &pos);
     QVector3D calcVec3(float x, float y, float z);
+    //检测与三角相交否
+    float checkTriCollision(QVector3D pos, QVector3D ray,
+                            QVector3D vtx1, QVector3D vtx2, QVector3D vtx3);
 
 private:
     //【1】射线
@@ -52,11 +59,14 @@ private:
     QOpenGLVertexArrayObject rayVao;
     QOpenGLBuffer rayVbo;
     QVector<QVector3D> rayData;
-    //【2】立方体
-    QOpenGLShaderProgram boxProgram;
-    QOpenGLVertexArrayObject boxVao;
-    QOpenGLBuffer boxVbo;
-    //
+    //【2】图元
+    QOpenGLShaderProgram eleProgram;
+    QOpenGLVertexArrayObject eleVao;
+    QOpenGLBuffer eleVbo;
+    QVector<QVector3D> eleVertex;
+    //选中项颜色
+    QVector3D selectColor{ 0.0, 0.0, 0.0 };
+    //旋转
     QVector3D rotationAxis;
     QQuaternion rotationQuat;
     //透视投影的fovy参数，视野范围

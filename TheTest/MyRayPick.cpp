@@ -18,18 +18,24 @@ void main()
 fragColor = vec4(0.0, 0.8, 0.0, 1.0);
 })";
 
-static const char *box_vertex=R"(#version 450 core
+//note这里两个vec直接比较不知道会不会有问题
+static const char *ele_vertex=R"(#version 450 core
 layout (location = 0) in vec3 inPos;
 layout (location = 1) in vec3 inColor;
 out vec3 theColor;
 uniform mat4 mvp;
+uniform vec3 selectColor;
 void main()
 {
 gl_Position = mvp * vec4(inPos, 1.0);
+if(selectColor==inColor){
+theColor = vec3(1.0, 1.0, 1.0);
+}else{
 theColor = inColor;
+}
 })";
 
-static const char *box_fragment=R"(#version 450 core
+static const char *ele_fragment=R"(#version 450 core
 in vec3 theColor;
 out vec4 fragColor;
 void main()
@@ -37,59 +43,13 @@ void main()
 fragColor = vec4(theColor, 1.0);
 })";
 
-//顶点数据（盒子六个面，一个面两个三角）
-static float box_vertices[] = {
-    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-    0.5f,  -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-    0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-    0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-
-    -0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-    0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-    0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-    0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 0.0f,
-
-    -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
-
-    0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-    0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-    0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-    0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
-    0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-    0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-
-    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f,
-    0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f,
-    0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-    0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-    0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-    0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-    0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f
-};
-
-
 MyRayPick::MyRayPick(QWidget *parent)
     : QOpenGLWidget(parent)
 {
     setFocusPolicy(Qt::ClickFocus); //默认没有焦点
 
-    rotationQuat = QQuaternion::fromAxisAndAngle(1.0f, 0.0f, 0.0f, 30.0f);
-    rotationQuat *= QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, -10.0f);
+    //rotationQuat = QQuaternion::fromAxisAndAngle(1.0f, 0.0f, 0.0f, 30.0f);
+    //rotationQuat *= QQuaternion::fromAxisAndAngle(0.0f, 1.0f, 0.0f, -10.0f);
 }
 
 MyRayPick::~MyRayPick()
@@ -105,8 +65,8 @@ MyRayPick::~MyRayPick()
         rayVbo.destroy();
     }
     rayVao.destroy();
-    boxVbo.destroy();
-    boxVao.destroy();
+    eleVbo.destroy();
+    eleVao.destroy();
     doneCurrent();
 }
 
@@ -133,47 +93,58 @@ void MyRayPick::initializeGL()
     rayVao.bind();
     rayVbo=QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
 
-    //【】盒子
+    //【】图元
     //将source编译为指定类型的着色器，并添加到此着色器程序
-    if(!boxProgram.addCacheableShaderFromSourceCode(
-                QOpenGLShader::Vertex,box_vertex)){
-        qDebug()<<"compiler vertex error"<<boxProgram.log();
+    if(!eleProgram.addCacheableShaderFromSourceCode(
+                QOpenGLShader::Vertex,ele_vertex)){
+        qDebug()<<"compiler vertex error"<<eleProgram.log();
     }
-    if(!boxProgram.addCacheableShaderFromSourceCode(
-                QOpenGLShader::Fragment,box_fragment)){
-        qDebug()<<"compiler fragment error"<<boxProgram.log();
+    if(!eleProgram.addCacheableShaderFromSourceCode(
+                QOpenGLShader::Fragment,ele_fragment)){
+        qDebug()<<"compiler fragment error"<<eleProgram.log();
     }
     //使用addShader()将添加到该程序的着色器链接在一起。
-    if(!boxProgram.link()){
-        qDebug()<<"link shaderprogram error"<<boxProgram.log();
+    if(!eleProgram.link()){
+        qDebug()<<"link shaderprogram error"<<eleProgram.log();
     }
 
-    boxVao.create();
-    boxVao.bind();
-    boxVbo=QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
-    boxVbo.create();
-    boxVbo.bind();
-    boxVbo.allocate(box_vertices,sizeof(box_vertices));
+    eleVertex = QVector<QVector3D>{
+            QVector3D(1.0f, 0.0f, -0.5f),  QVector3D(1.0f, 0.0f, 0.0f),
+            QVector3D(-0.5f, -0.5f, -0.5f),  QVector3D(1.0f, 0.0f, 0.0f),
+            QVector3D(-0.5f, 0.5f, -0.5f),  QVector3D(1.0f, 0.0f, 0.0f),
+
+            QVector3D(-1.0f, 0.0f, -0.1f),  QVector3D(0.0f, 1.0f, 0.0f),
+            QVector3D(0.0f, 0.5f, -0.1f),  QVector3D(0.0f, 1.0f, 0.0f),
+            QVector3D(0.0f, -0.5f, -0.1f),  QVector3D(0.0f, 1.0f, 0.0f),
+
+            QVector3D(0.6f, 0.0f, 0.1f),  QVector3D(0.0f, 0.0f, 1.0f),
+            QVector3D(1.0f, 0.0f, -0.3f),  QVector3D(0.0f, 0.0f, 1.0f),
+            QVector3D(1.0f, 0.5f, -0.5f),  QVector3D(0.0f, 0.0f, 1.0f)};
+
+    eleVao.create();
+    eleVao.bind();
+    eleVbo=QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    eleVbo.create();
+    eleVbo.bind();
+    eleVbo.allocate((void*)eleVertex.data(),sizeof(QVector3D)*eleVertex.size());
 
     //参数1对应layout
     // position attribute
-    boxProgram.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 6);
-    boxProgram.enableAttributeArray(0);
+    eleProgram.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 6);
+    eleProgram.enableAttributeArray(0);
     // color attribute
-    boxProgram.setAttributeBuffer(1, GL_FLOAT, sizeof(GLfloat) * 3, 3, sizeof(GLfloat) * 6);
-    boxProgram.enableAttributeArray(1);
+    eleProgram.setAttributeBuffer(1, GL_FLOAT, sizeof(GLfloat) * 3, 3, sizeof(GLfloat) * 6);
+    eleProgram.enableAttributeArray(1);
+
+    //深度缓冲
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 }
 
 void MyRayPick::paintGL()
 {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    //因为我们使用了深度测试，需要在每次渲染迭代之前清除深度缓冲
-    //（否则前一帧的深度信息仍然保存在缓冲中）
+    //清除缓冲
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //Z缓冲(Z-buffer)，也被称为深度缓冲(Depth Buffer)
-    //（不开启深度缓冲的话，盒子的纹理堆叠顺序就是乱的）
-    glEnable(GL_DEPTH_TEST); //默认关闭的
 
     //观察矩阵
     QMatrix4x4 view;
@@ -185,12 +156,13 @@ void MyRayPick::paintGL()
     //模型矩阵
     QMatrix4x4 model;
 
-    boxProgram.bind();
-    boxVao.bind();
-    boxProgram.setUniformValue("mvp", projection * view * model);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    boxVao.release();
-    boxProgram.release();
+    eleProgram.bind();
+    eleVao.bind();
+    eleProgram.setUniformValue("mvp", projection * view * model);
+    eleProgram.setUniformValue("selectColor", selectColor);
+    glDrawArrays(GL_TRIANGLES, 0, eleVertex.size()/2);
+    eleVao.release();
+    eleProgram.release();
 
     if(rayData.size()>0)
     {
@@ -262,16 +234,36 @@ void MyRayPick::appendRay(const QPointF &pos)
     float ndc_y = 1.0f - (2.0f * pos.y() / height());
     QVector3D ray_p1 = calcVec3(ndc_x, ndc_y, 1.0f);
     QVector3D ray_p2 = calcVec3(ndc_x, ndc_y, -1.0f);
+    //判断射线与三角碰撞情况，然后选离观察点最近的三角
+    int check_index = -1;
+    float check_value = -1;
+    for(int i=0;i<eleVertex.size();i+=2*3)
+    {
+        float check = checkTriCollision(ray_p2, ray_p1,
+                                        eleVertex.at(i),
+                                        eleVertex.at(i+2),
+                                        eleVertex.at(i+4));
+        if(check > 0.0f){
+            if(check_value <= 0.0f || check_value > check){
+                check_index = i;
+                check_value = check;
+            }
+        }
+        qDebug()<<"check"<<i<<check;
+    }
+    if(check_index != -1){
+        selectColor = eleVertex.at(check_index+1);
+    }
 
     makeCurrent();
     //rayData.append(QVector3D(0,0,0.8f));
     //rayData.append(QVector3D(0,0,-0.8f));
     rayData.append(ray_p1);
     rayData.append(ray_p2);
-    rayVao.bind();
     if(rayVbo.isCreated()){
         rayVbo.destroy();
     }
+    rayVao.bind();
     rayVbo.create();
     rayVbo.bind();
     rayVbo.allocate(rayData.data(),rayData.size()*sizeof(QVector3D));
@@ -304,4 +296,39 @@ QVector3D MyRayPick::calcVec3(float x, float y, float z)
     }
 
     return world_ray.toVector3D();
+}
+
+float MyRayPick::checkTriCollision(QVector3D pos, QVector3D ray,
+                                   QVector3D vtx1, QVector3D vtx2, QVector3D vtx3)
+{
+    QVector3D E1 = vtx2 - vtx1;
+    QVector3D E2 = vtx3 - vtx1;
+    QVector3D P = QVector3D::crossProduct(ray, E2);
+    float det = QVector3D::dotProduct(P, E1);
+    QVector3D T;
+    if(det > 0)
+        T = pos - vtx1;
+    else{
+        T = vtx1 - pos;
+        det = -det;
+    }
+
+    //表示射线与三角面所在的平面平行，返回不相交
+    if(det < 0.00001f)
+        return -1.0f;
+
+    //相交则判断 交点是否落在三角形面内
+    float u = QVector3D::dotProduct(P, T);
+    if(u < 0.0f || u > det)
+        return -1.0f;
+
+    QVector3D Q = QVector3D::crossProduct(T, E1);
+    float v = QVector3D::dotProduct(Q, ray);
+    if(v < 0.0f || u+v > det)
+        return -1.0f;
+
+    float t = QVector3D::dotProduct(Q, E2);
+    if(t < 0.0f)
+        return -1.0f;
+    return t/det;
 }
