@@ -267,10 +267,10 @@ void GLCamera::keyPressEvent(QKeyEvent *event)
         cameraPos += QVector3D::crossProduct(cameraFront, cameraRight).normalized() * cameraSpeed;
         break;
     case Qt::Key_A: //摄像机往左，场景往右
-        cameraPos -= QVector3D::crossProduct(cameraFront, cameraUp).normalized() * cameraSpeed;
+        cameraPos -= QVector3D::crossProduct(cameraFront, worldUp).normalized() * cameraSpeed;
         break;
     case Qt::Key_D: //摄像机往右，场景往左
-        cameraPos += QVector3D::crossProduct(cameraFront, cameraUp).normalized() * cameraSpeed;
+        cameraPos += QVector3D::crossProduct(cameraFront, worldUp).normalized() * cameraSpeed;
         break;
     case Qt::Key_E: //远
         cameraPos -= cameraFront * cameraSpeed;
@@ -343,6 +343,8 @@ void GLCamera::calculateCamera()
     front.setY(std::sin(pitch));
     front.setZ(std::sin(yaw) * std::cos(pitch));
     cameraFront = front.normalized();
+    cameraRight = QVector3D::crossProduct(cameraFront, worldUp).normalized();
+    cameraUp = QVector3D::crossProduct(cameraRight, cameraFront).normalized();
 }
 
 QMatrix4x4 GLCamera::getViewMatrix()

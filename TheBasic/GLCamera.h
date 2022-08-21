@@ -65,6 +65,7 @@ private:
     QVector3D cameraFront{ 0.0f, 0.0f, -1.0f };
     QVector3D cameraUp{ 0.0f, 1.0f, 0.0f };
     QVector3D cameraRight{ 1.0f, 0.0f, 0.0f };
+    QVector3D worldUp{ 0.0f, 1.0f, 0.0f };
     //Euler Angles
     //偏航角如果是0.0f,指向的是 x轴正方向，即右方向，所以向里转90度，初始方向指向z轴负方向
     float eulerYaw{ -90.0f }; //偏航角，绕y左右转
