@@ -6,4 +6,5 @@
 
 # Environment （开发环境）
 
-（2021-7-25）Qt5.15.2 + MSVC2019 32/64bit + OpenGL4.5
+（2023-06-12）Qt5.15.2 + MSVC2019 32/64bit + OpenGL4.5
+（2023-06-12）Qt6.5.1 + MSVC2019 64bit + OpenGL4.5

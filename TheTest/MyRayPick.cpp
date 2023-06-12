@@ -126,7 +126,7 @@ void MyRayPick::initializeGL()
     eleVbo=QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     eleVbo.create();
     eleVbo.bind();
-    eleVbo.allocate((void*)eleVertex.data(),sizeof(QVector3D)*eleVertex.size());
+    eleVbo.allocate((void*)eleVertex.data(), (int)sizeof(QVector3D)*eleVertex.size());
 
     //参数1对应layout
     // position attribute
@@ -212,8 +212,15 @@ void MyRayPick::mouseMoveEvent(QMouseEvent *event)
 void MyRayPick::wheelEvent(QWheelEvent *event)
 {
     event->accept();
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
+    //const QPoint pos = event->pos();
+    const int delta = event->delta();
+#else
+    //const QPoint pos = event->position().toPoint();
+    const int delta = event->angleDelta().y();
+#endif
     //fovy越小，模型看起来越大
-    if(event->delta() < 0){
+    if(delta < 0){
         //鼠标向下滑动为-，这里作为zoom out
         projectionFovy += 0.5f;
         if(projectionFovy > 90)
@@ -266,7 +273,7 @@ void MyRayPick::appendRay(const QPointF &pos)
     rayVao.bind();
     rayVbo.create();
     rayVbo.bind();
-    rayVbo.allocate(rayData.data(),rayData.size()*sizeof(QVector3D));
+    rayVbo.allocate(rayData.data(), (int)rayData.size()*sizeof(QVector3D));
     rayProgram.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 3);
     rayProgram.enableAttributeArray(0);
     doneCurrent();

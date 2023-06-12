@@ -136,7 +136,7 @@ fragColor = vec4(red, 0.0f, 0.0f, 1.0f);
     vbo=QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     vbo.create();
     vbo.bind();
-    vbo.allocate((void *)vertex.data(), sizeof(GLfloat) * vertex.size() * 3);
+    vbo.allocate((void *)vertex.data(), (int)sizeof(GLfloat) * vertex.size() * 3);
     //setAttributeBuffer(int location, GLenum type, int offset, int tupleSize, int stride = 0)
     shaderProgram.setAttributeBuffer(0, GL_FLOAT, 0, 3, sizeof(GLfloat) * 3);
     shaderProgram.enableAttributeArray(0);
@@ -241,8 +241,15 @@ void MyTorus::mouseMoveEvent(QMouseEvent *event)
 void MyTorus::wheelEvent(QWheelEvent *event)
 {
     event->accept();
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
+    //const QPoint pos = event->pos();
+    const int delta = event->delta();
+#else
+    //const QPoint pos = event->position().toPoint();
+    const int delta = event->angleDelta().y();
+#endif
     //fovy越小，模型看起来越大
-    if(event->delta() < 0){
+    if(delta < 0){
         //鼠标向下滑动为-，这里作为zoom out
         projectionFovy += 0.5f;
         if(projectionFovy > 90)

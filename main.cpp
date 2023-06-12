@@ -79,17 +79,20 @@ int main(int argc, char *argv[])
     QGuiApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
     QApplication app(argc, argv);
 
-    //fmt.setSamples(8);//多重采样
     //《OpenGL编程指南（原书第九版）》以OpenGL4.5为基础
     qDebug() << "Need OpenGL4.5 desktop context";
     if(!checkVersion(4, 5))
         return -1;
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    //在Qt6设置后显示黑色窗口，或者切换tab崩溃
     QSurfaceFormat fmt;
     fmt.setRenderableType(QSurfaceFormat::OpenGL);
     fmt.setVersion(4, 5);
     fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
+    //fmt.setSamples(8);//多重采样
     QSurfaceFormat::setDefaultFormat(fmt);
+#endif
 
     MainWindow w;
     w.show();

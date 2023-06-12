@@ -362,8 +362,15 @@ void MyQuaternion::mouseMoveEvent(QMouseEvent *event)
 void MyQuaternion::wheelEvent(QWheelEvent *event)
 {
     event->accept();
+#if (QT_VERSION < QT_VERSION_CHECK(5, 15, 0))
+    //const QPoint pos = event->pos();
+    const int delta = event->delta();
+#else
+    //const QPoint pos = event->position().toPoint();
+    const int delta = event->angleDelta().y();
+#endif
     //fovy越小，模型看起来越大
-    if(event->delta() < 0){
+    if(delta < 0){
         //鼠标向下滑动为-，这里作为zoom out
         projectionFovy += 0.5f;
         if(projectionFovy > 90)
