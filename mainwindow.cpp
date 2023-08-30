@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //在ui中提升类，放入unitwidget
+    ui->tabWidget->setCurrentIndex(0);
 }
 
 MainWindow::~MainWindow()
