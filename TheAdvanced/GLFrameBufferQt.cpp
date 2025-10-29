@@ -510,6 +510,10 @@ void GLFrameBufferQt::paintFbo()
 
     fboShaderProgram.release();
     fboBuffer->release();
+
+    //渲染 FBO 后恢复一些全局 GL 状态，防止影响后续默认帧缓冲的绘制
+    //例如深度测试在 FBO 绘制时被启用，若不禁用可能会导致后续绘制（如全屏四边形）被测试丢弃
+    glDisable(GL_DEPTH_TEST);
 }
 
 void GLFrameBufferQt::freeScreen()
