@@ -4,6 +4,7 @@ FORMS += \
 HEADERS += \
     $$PWD/MyCamera.h \
     $$PWD/MyCoordinate.h \
+    $$PWD/MyImageView.h \
     $$PWD/MyPoker.h \
     $$PWD/MyQuaternion.h \
     $$PWD/MyRayPick.h \
@@ -14,6 +15,7 @@ HEADERS += \
 SOURCES += \
     $$PWD/MyCamera.cpp \
     $$PWD/MyCoordinate.cpp \
+    $$PWD/MyImageView.cpp \
     $$PWD/MyPoker.cpp \
     $$PWD/MyQuaternion.cpp \
     $$PWD/MyRayPick.cpp \

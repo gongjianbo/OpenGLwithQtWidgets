@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
-    <height>413</height>
+    <width>656</width>
+    <height>461</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>6</number>
+      <number>7</number>
      </property>
      <widget class="QWidget" name="tabTransform">
       <attribute name="title">
@@ -89,6 +89,16 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabImageView">
+      <attribute name="title">
+       <string>ImageView</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_9">
+       <item>
+        <widget class="MyImageView" name="openGLWidget"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -128,6 +138,11 @@
    <class>MyRayPick</class>
    <extends>QOpenGLWidget</extends>
    <header>MyRayPick.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MyImageView</class>
+   <extends>QOpenGLWidget</extends>
+   <header>MyImageView.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

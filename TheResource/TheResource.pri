@@ -1,0 +1,2 @@
+RESOURCES += \
+    $$PWD/res.qrc

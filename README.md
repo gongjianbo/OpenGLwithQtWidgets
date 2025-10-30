@@ -9,6 +9,6 @@ LearnOpenGL 中文链接：https://learnopengl-cn.github.io/
 
 # Environment （开发环境）
 
-（2023-08-30）Qt5.15.2 + MSVC2019 32/64bit + OpenGL4.5
+（2025-10-30）Qt5.15.2 + MSVC2019 32/64bit + OpenGL4.5
 
-（2023-08-30）Qt6.5.2 + MSVC2019 64bit + OpenGL4.5
+（2025-10-30）Qt6.9.2 + MSVC2022 64bit + OpenGL4.5

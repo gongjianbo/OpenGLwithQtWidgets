@@ -6,5 +6,6 @@
         <file>container2.png</file>
         <file>container2_specular.png</file>
         <file>metal.png</file>
+        <file>fishpond.jpg</file>
     </qresource>
 </RCC>
